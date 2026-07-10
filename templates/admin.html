@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="../static/css/admin.css">
+</head>
+
+<body>
+  <div class="navbar">
+    <div class="logo"><img src="../static/Images/logo (2).png" alt="Logo"><a href="/">Resume Builder</a></div>
+    <ul>
+      <li><a href="#">Features</a></li>
+      <li><a href="#">Templates</a></li>
+      <li><a href="#">Pricing</a></li>
+    </ul>
+    <div class="buttons">
+      <a href="/signup" class="btn btn-signin">User Sign In</a>
+      <a href="/login" class="btn btn-primary">User Login</a>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard Heading -->
+  <div class="head">
+    <h2 style="text-align: center; margin: 30px; margin-top: 80px;">Admin Dashboard</h2>
+  </div>
+  <h2>Registered Users</h2>
+  <!-- <form action="/admin" method="GET">
+    <p>{{users.name}}</p>
+  </form>
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+    </tr>
+    {% for user in users %}
+    <tr>
+      <td>{{ user.user_id}}</td>
+      <td>{{ user.name}}</td>
+      <td>{{ user.password}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  </form> -->
+
+ 
+<!-- <div class="cards">
+  {% if users %}
+    {% for u in users %}
+      <div class="card">
+        <div class="card-header">
+          <h2>{{ u['name'] }}</h2>
+        </div>
+        <div class="card-body">
+          <p><strong>Username:</strong> {{ u['username'] }}</p>
+          <p><strong>Password:</strong> {{ u['password'] }}</p>
+          <p><strong>Phone:</strong> {{ u['phone'] }}</p>
+          <p><strong>Email:</strong> {{ u['email'] }}</p>
+        </div>
+        <div class="card-footer">
+          <a href="/resume/{{ u['id'] }}" class="btn-view">View Resume</a>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p style="text-align: center;">No users found.</p>
+  {% endif %}
+</div> -->
+
+
+</body>
+</html>

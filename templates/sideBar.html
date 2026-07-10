@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Builder</title>
+  <link rel="icone" href="../static/Images/logo__2_-removebg-preview.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.2.0/fonts/remixicon.css">
+  <link rel="stylesheet" href="https://unpkg.com/css-pro-layout@1.1.0/dist/css/css-pro-layout.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&amp;display=swap">
+  <link rel="stylesheet" href="../static/sideBar.css">
+  <!-- <link rel="stylesheet" href="../static/preview.css"> -->
+  <!-- <link rel="stylesheet" href="./css/form.css"> -->
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+
+<body>
+
+  <!-- profile -->
+  <div class="pro"><i class="fa-solid fa-circle-user"
+      style="font-size: 36px; color: transparent; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+
+    <ul class="dropdown">
+      <li><a href="/profile">Profile</a></li>
+      <li><a href="/logout">Logout</a></li>
+      <li><a href="/settings">Settings</a></li>
+    </ul>
+  </div>
+
+
+
+
+
+
+
+  <div id="mainContent" class="hidden">
+
+    <div class="layout has-sidebar fixed-sidebar fixed-header" style="position: absolute;">
+      <aside id="sidebar" class="sidebar break-point-sm has-bg-image">
+        <!-- <a id="btn-collapse" class="sidebar-collapser"><i class="ri-arrow-left-s-line"></i></a> -->
+        <div class="image-wrapper">
+        </div>
+        <div class="sidebar-layout">
+          <div class="sidebar-header">
+            <div class="pro-sidebar-logo" style=" gap: 8px;">
+              <img src="../static/Images/logo__2_-removebg-preview.png" width="40px" alt="">
+              <h5><a href="/homepage"><span class="logo-text">Resume</span> Builder</a></h5>
+            </div>
+          </div>
+          <div class="sidebar-content">
+            <nav class="menu open-current-submenu">
+              <ul>
+                <li class="menu-header"><span style="font-weight: 700; background: linear-gradient(to right, #2563eb, #9333ea);
+      -webkit-background-clip: text; 
+     -webkit-text-fill-color: transparent;"> OPTIONS</span></li>
+                <li class="menu-item sub-menu">
+                  <a href="#">
+                    <span class="menu-icon">
+                      <i class="fa-solid fa-phone"></i>
+                    </span>
+                    <span class="menu-title"> <button class="tab-button"
+                        data-target="contactForm">Contact</button></span>
+                    <!-- <span class="menu-suffix">
+                      <span class="badge primary">Hot</span>
+                    </span>  -->
+                  </a>
+                  <div class="sub-menu-list">
+                    <ul>
+                      <li class="menu-item">
+
+                      </li>
+                      <li class="menu-item">
+
+                      </li>
+                      <li class="menu-item sub-menu">
+
+                        <div class="sub-menu-list">
+                          <ul>
+                            <li class="menu-item">
+
+                            </li>
+                            <li class="menu-item">
+
+                            </li>
+                            <li class="menu-item sub-menu">
+
+                              <div class="sub-menu-list">
+                                <ul>
+                                  <li class="menu-item">
+
+                                  </li>
+
+                            </li>
+                            <li class="menu-item sub-menu">
+
+                              <div class="sub-menu-list">
+                                <ul>
+                                  <li class="menu-item">
+
+                                  </li>
+                                </ul>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+          </div>
+          </li>
+          <li class="menu-item sub-menu">
+            <a href="#">
+              <span class="menu-icon">
+                <i class="fa-solid fa-book"></i>
+              </span>
+              <span class="menu-title"> <button class="tab-button" data-target="summaryForm">Summary</button></span>
+            </a>
+            <div class="sub-menu-list">
+              <ul>
+                <li class="menu-item">
+
+                </li>
+                <li class="menu-item">
+
+                </li>
+                <li class="menu-item">
+
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="menu-item sub-menu">
+            <a href="#">
+              <span class="menu-icon">
+                <i class="ri-bar-chart-2-fill"></i>
+              </span>
+              <span class="menu-title"> <button class="tab-button"
+                  data-target="experienceForm">Experience</button></span>
+            </a>
+            <div class="sub-menu-list">
+              <ul>
+                <li class="menu-item">
+
+                </li>
+                <li class="menu-item">
+
+                </li>
+                <li class="menu-item">
+
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="menu-item sub-menu">
+            <a href="#">
+              <span class="menu-icon">
+                <i class="fa-solid fa-lightbulb"></i>
+              </span>
+              <span class="menu-title"> <button class="tab-button" data-target="projectForm">Project</button></span>
+            </a>
+            <div class="sub-menu-list">
+              <ul>
+                <li class="menu-item">
+
+                </li>
+                <li class="menu-item">
+
+                </li>
+                <li class="menu-item">
+
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="menu-item sub-menu">
+            <a href="#">
+              <span class="menu-icon">
+                <i class="fa-solid fa-building-columns"></i>
+              </span>
+              <span class="menu-title"> <button class="tab-button" data-target="educationForm">Education</button></span>
+            </a>
+            <div class="sub-menu-list">
+              <ul>
+                <li class="menu-item">
+
+                </li>
+                <li class="menu-item">
+
+                </li>
+                <li class="menu-item">
+
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="menu-item sub-menu">
+            <a href="#">
+              <span class="menu-icon">
+                <i class="fas fa-tools"></i>
+              </span>
+              <span class="menu-title"> <button class="tab-button" data-target="skillsForm">Skills</button></span>
+            </a>
+            <div class="sub-menu-list">
+              <ul>
+                <li class="menu-item">
+
+                </li>
+                <li class="menu-item">
+
+                </li>
+                <li class="menu-item">
+
+                </li>
+              </ul>
+            </div>
+          </li>
+
+          <li class="menu-header" style="padding-top: 20px; background: linear-gradient(to right, #2563eb, #9333ea);
+      -webkit-background-clip: text; /* Clip the background to the text */
+     -webkit-text-fill-color: transparent;"><span> EXTRA </span></li>
+          <li class="menu-item">
+            <a href="#">
+              <span class="menu-icon">
+                <i class="fas fa-rocket"></i>
+              </span>
+              <span class="menu-title"><button class="tab-button"
+                  data-target="involvementForm">Involvement</button></span>
+              <!-- <span class="menu-suffix">
+                <span class="badge secondary">Beta</span>
+              </span> -->
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="#">
+              <span class="menu-icon">
+                <i class="fas fa-book-open"></i>
+              </span>
+              <span class="menu-title"><button class="tab-button"
+                  data-target="courseworkForm">Coursework</button></span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="#">
+              <span class="menu-icon">
+                <i class="fas fa-medal"></i>
+              </span>
+              <span class="menu-title"><button class="tab-button"
+                  data-target="certificationForm">Certification</button></span>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="previewForm">
+              <span class="menu-icon">
+                <i class="fas fa-flag-checkered"></i>
+              </span>
+              <span class="menu-title"><button class="tab-button" data-target="previewForm">Finish &
+                  Preview</button></span>
+            </a>
+          </li>
+          </ul>
+          </nav>
+        </div>
+        <!-- <div class="sidebar-footer">
+              <div class="footer-box">
+                
+              </div>
+            </div> -->
+    </div>
+    </aside>
+    <div id="overlay" class="overlay"></div>
+    <div class="layout">
+      <main class="content">
+        <div>
+          <a id="btn-toggle" href="#" class="sidebar-toggler break-point-sm">
+            <i class="ri-menu-line ri-xl"></i>
+          </a>
+
+
+        </div>
+
+
+      </main>
+      <div class="overlay"></div>
+    </div>
+  </div>
+  <div class="content" style="margin-left: 18%;
+    margin-top: 60px;">
+
+    <div id="formContainer">
+      <div id="contactForm" class="form-section">
+        <div class="contect">
+          <form method="POST" action="/contectForm">
+
+            <div class="cont1">
+              <label for="FullName"><b>Full Name</b></label>
+              <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="cont2">
+              <label for="email"><b>Email Address </b></label>
+              <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+
+
+            <div class="cont3">
+              <label for="phone"><b>Phone Number</b></label>
+              <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+            </div>
+
+            <div class="cont4">
+              <label for="address"><b>Personal website </b>or relevant link</label>
+              <input id="text" name="p_web" placeholder="https://www.charlesbloomberg.com"></input>
+            </div>
+
+
+            <div class="cont5">
+              <label for="address"><b>Linkedin </b>URL</label>
+              <input id="text" name="l_web" placeholder="https://www.charlesbloomberg.com"></input>
+            </div>
+
+
+            <div class="cont7">
+              <label for="Country"><b>Country</b></label>
+              <select id="Country" name="Country">
+                <option value="">Select a Country</option>
+                <option value="afghanistan">Afghanistan</option>
+                <option value="albania">Albania</option>
+                <option value="algeria">Algeria</option>
+                <option value="andorra">Andorra</option>
+                <option value="angola">Angola</option>
+                <option value="argentina">Argentina</option>
+                <option value="armenia">Armenia</option>
+                <option value="australia">Australia</option>
+                <option value="austria">Austria</option>
+                <option value="azerbaijan">Azerbaijan</option>
+                <option value="bahamas">Bahamas</option>
+                <option value="bahrain">Bahrain</option>
+                <option value="bangladesh">Bangladesh</option>
+                <option value="barbados">Barbados</option>
+                <option value="belarus">Belarus</option>
+                <option value="belgium">Belgium</option>
+                <option value="belize">Belize</option>
+                <option value="benin">Benin</option>
+                <option value="bhutan">Bhutan</option>
+                <option value="bolivia">Bolivia</option>
+                <option value="bosnia_herzegovina">Bosnia and Herzegovina</option>
+                <option value="botswana">Botswana</option>
+                <option value="brazil">Brazil</option>
+                <option value="brunei">Brunei</option>
+                <option value="bulgaria">Bulgaria</option>
+                <option value="burkina_faso">Burkina Faso</option>
+                <option value="burundi">Burundi</option>
+                <option value="cambodia">Cambodia</option>
+                <option value="cameroon">Cameroon</option>
+                <option value="canada">Canada</option>
+                <option value="cape_verde">Cape Verde</option>
+                <option value="central_african_republic">Central African Republic</option>
+                <option value="chad">Chad</option>
+                <option value="chile">Chile</option>
+                <option value="china">China</option>
+                <option value="colombia">Colombia</option>
+                <option value="comoros">Comoros</option>
+                <option value="congo">Congo</option>
+                <option value="costa_rica">Costa Rica</option>
+                <option value="croatia">Croatia</option>
+                <option value="cuba">Cuba</option>
+                <option value="cyprus">Cyprus</option>
+                <option value="czech_republic">Czech Republic</option>
+                <option value="denmark">Denmark</option>
+                <option value="djibouti">Djibouti</option>
+                <option value="dominican_republic">Dominican Republic</option>
+                <option value="ecuador">Ecuador</option>
+                <option value="egypt">Egypt</option>
+                <option value="el_salvador">El Salvador</option>
+                <option value="estonia">Estonia</option>
+                <option value="eswatini">Eswatini</option>
+                <option value="ethiopia">Ethiopia</option>
+                <option value="fiji">Fiji</option>
+                <option value="finland">Finland</option>
+                <option value="france">France</option>
+                <option value="gabon">Gabon</option>
+                <option value="gambia">Gambia</option>
+                <option value="georgia">Georgia</option>
+                <option value="germany">Germany</option>
+                <option value="ghana">Ghana</option>
+                <option value="greece">Greece</option>
+                <option value="guatemala">Guatemala</option>
+                <option value="haiti">Haiti</option>
+                <option value="honduras">Honduras</option>
+                <option value="hungary">Hungary</option>
+                <option value="iceland">Iceland</option>
+                <option value="india">India</option>
+                <option value="indonesia">Indonesia</option>
+                <option value="iran">Iran</option>
+                <option value="iraq">Iraq</option>
+                <option value="ireland">Ireland</option>
+                <option value="israel">Israel</option>
+                <option value="italy">Italy</option>
+                <option value="jamaica">Jamaica</option>
+                <option value="japan">Japan</option>
+                <option value="jordan">Jordan</option>
+                <option value="kazakhstan">Kazakhstan</option>
+                <option value="kenya">Kenya</option>
+                <option value="kuwait">Kuwait</option>
+                <option value="kyrgyzstan">Kyrgyzstan</option>
+                <option value="laos">Laos</option>
+                <option value="latvia">Latvia</option>
+                <option value="lebanon">Lebanon</option>
+                <option value="libya">Libya</option>
+                <option value="luxembourg">Luxembourg</option>
+                <option value="madagascar">Madagascar</option>
+                <option value="malaysia">Malaysia</option>
+                <option value="maldives">Maldives</option>
+                <option value="mexico">Mexico</option>
+                <option value="mongolia">Mongolia</option>
+                <option value="morocco">Morocco</option>
+                <option value="myanmar">Myanmar</option>
+                <option value="nepal">Nepal</option>
+                <option value="netherlands">Netherlands</option>
+                <option value="new_zealand">New Zealand</option>
+                <option value="nigeria">Nigeria</option>
+                <option value="north_korea">North Korea</option>
+                <option value="norway">Norway</option>
+                <option value="oman">Oman</option>
+                <option value="pakistan">Pakistan</option>
+                <option value="palestine">Palestine</option>
+                <option value="panama">Panama</option>
+                <option value="paraguay">Paraguay</option>
+                <option value="peru">Peru</option>
+                <option value="philippines">Philippines</option>
+                <option value="poland">Poland</option>
+                <option value="portugal">Portugal</option>
+                <option value="qatar">Qatar</option>
+                <option value="romania">Romania</option>
+                <option value="russia">Russia</option>
+                <option value="rwanda">Rwanda</option>
+                <option value="saudi_arabia">Saudi Arabia</option>
+                <option value="senegal">Senegal</option>
+                <option value="serbia">Serbia</option>
+                <option value="singapore">Singapore</option>
+                <option value="south_africa">South Africa</option>
+                <option value="south_korea">South Korea</option>
+                <option value="spain">Spain</option>
+                <option value="sri_lanka">Sri Lanka</option>
+                <option value="sudan">Sudan</option>
+                <option value="sweden">Sweden</option>
+                <option value="switzerland">Switzerland</option>
+                <option value="syria">Syria</option>
+                <option value="taiwan">Taiwan</option>
+                <option value="tajikistan">Tajikistan</option>
+                <option value="thailand">Thailand</option>
+                <option value="tunisia">Tunisia</option>
+                <option value="turkey">Turkey</option>
+                <option value="uganda">Uganda</option>
+                <option value="ukraine">Ukraine</option>
+                <option value="united_arab_emirates">United Arab Emirates</option>
+                <option value="united_kingdom">United Kingdom</option>
+                <option value="united_states">United States</option>
+                <option value="uzbekistan">Uzbekistan</option>
+                <option value="vietnam">Vietnam</option>
+                <option value="yemen">Yemen</option>
+                <option value="zimbabwe">Zimbabwe</option>
+              </select>
+
+            </div>
+
+            <div class="cont7">
+              <label for="Country"><b>State</b></label>
+              <select id="State" name="State">
+
+                <option value="">Select a State</option>
+                <option value="andhra_pradesh">Andhra Pradesh</option>
+                <option value="arunachal_pradesh">Arunachal Pradesh</option>
+                <option value="assam">Assam</option>
+                <option value="bihar">Bihar</option>
+                <option value="chhattisgarh">Chhattisgarh</option>
+                <option value="goa">Goa</option>
+                <option value="gujarat">Gujarat</option>
+                <option value="haryana">Haryana</option>
+                <option value="himachal_pradesh">Himachal Pradesh</option>
+                <option value="jharkhand">Jharkhand</option>
+                <option value="karnataka">Karnataka</option>
+                <option value="kerala">Kerala</option>
+                <option value="madhya_pradesh">Madhya Pradesh</option>
+                <option value="maharashtra">Maharashtra</option>
+                <option value="manipur">Manipur</option>
+                <option value="meghalaya">Meghalaya</option>
+                <option value="mizoram">Mizoram</option>
+                <option value="nagaland">Nagaland</option>
+                <option value="odisha">Odisha</option>
+                <option value="punjab">Punjab</option>
+                <option value="rajasthan">Rajasthan</option>
+                <option value="sikkim">Sikkim</option>
+                <option value="tamil_nadu">Tamil Nadu</option>
+                <option value="telangana">Telangana</option>
+                <option value="tripura">Tripura</option>
+                <option value="uttar_pradesh">Uttar Pradesh</option>
+                <option value="uttarakhand">Uttarakhand</option>
+                <option value="west_bengal">West Bengal</option>
+                <option value="andaman_nicobar">Andaman and Nicobar Islands</option>
+                <option value="chandigarh">Chandigarh</option>
+                <option value="dadra_nagar_haveli">Dadra and Nagar Haveli and Daman and Diu</option>
+                <option value="delhi">Delhi</option>
+                <option value="jammu_kashmir">Jammu and Kashmir</option>
+                <option value="ladakh">Ladakh</option>
+                <option value="lakshadweep">Lakshadweep</option>
+                <option value="puducherry">Puducherry</option>
+              </select>
+
+            </div>
+
+            <div class="cont7">
+              <label for="City"><b>City</b></label>
+              <select id="City" name="City">
+                <option value="">Select City</option>
+                <option value="mumbai">Mumbai</option>
+                <option value="delhi">Delhi</option>
+                <option value="bangalore">Bangalore</option>
+                <option value="hyderabad">Hyderabad</option>
+                <option value="ahmedabad">Ahmedabad</option>
+                <option value="chennai">Chennai</option>
+                <option value="kolkata">Kolkata</option>
+                <option value="surat">Surat</option>
+                <option value="pune">Pune</option>
+                <option value="jaipur">Jaipur</option>
+                <option value="lucknow">Lucknow</option>
+                <option value="kanpur">Kanpur</option>
+                <option value="nagpur">Nagpur</option>
+                <option value="indore">Indore</option>
+                <option value="thane">Thane</option>
+                <option value="bhopal">Bhopal</option>
+                <option value="visakhapatnam">Visakhapatnam</option>
+                <option value="patna">Patna</option>
+                <option value="vadodara">Vadodara</option>
+                <option value="ghaziabad">Ghaziabad</option>
+                <option value="ludhiana">Ludhiana</option>
+                <option value="agra">Agra</option>
+                <option value="nashik">Nashik</option>
+                <option value="faridabad">Faridabad</option>
+                <option value="meerut">Meerut</option>
+                <option value="rajkot">Rajkot</option>
+                <option value="varanasi">Varanasi</option>
+                <option value="srinagar">Srinagar</option>
+                <option value="aurangabad">Aurangabad</option>
+                <option value="dhanbad">Dhanbad</option>
+                <option value="amritsar">Amritsar</option>
+                <option value="noida">Noida</option>
+                <option value="allahabad">Allahabad</option>
+                <option value="ranchi">Ranchi</option>
+                <option value="howrah">Howrah</option>
+                <option value="jabalpur">Jabalpur</option>
+                <option value="gwalior">Gwalior</option>
+                <option value="coimbatore">Coimbatore</option>
+                <option value="vijayawada">Vijayawada</option>
+                <option value="jodhpur">Jodhpur</option>
+                <option value="madurai">Madurai</option>
+                <option value="raipur">Raipur</option>
+                <option value="kota">Kota</option>
+                <option value="guwahati">Guwahati</option>
+                <option value="chandigarh">Chandigarh</option>
+                <option value="solapur">Solapur</option>
+                <option value="hubli">Hubli</option>
+                <option value="mysore">Mysore</option>
+                <option value="tiruchirappalli">Tiruchirappalli</option>
+                <option value="bhubaneswar">Bhubaneswar</option>
+                <option value="salem">Salem</option>
+                <option value="warangal">Warangal</option>
+                <option value="guntur">Guntur</option>
+                <option value="bhiwandi">Bhiwandi</option>
+                <option value="saharanpur">Saharanpur</option>
+                <option value="gorakhpur">Gorakhpur</option>
+                <option value="bikaner">Bikaner</option>
+                <option value="amravati">Amravati</option>
+                <option value="noida">Noida</option>
+                <option value="jamshedpur">Jamshedpur</option>
+                <option value="bhilai">Bhilai</option>
+                <option value="cuttack">Cuttack</option>
+                <option value="kochi">Kochi</option>
+                <option value="udaipur">Udaipur</option>
+                <option value="vellore">Vellore</option>
+                <option value="ajmer">Ajmer</option>
+                <option value="jhansi">Jhansi</option>
+                <option value="ulhasnagar">Ulhasnagar</option>
+                <option value="sangli">Sangli</option>
+                <option value="asansol">Asansol</option>
+                <option value="nanded">Nanded</option>
+                <option value="dehradun">Dehradun</option>
+                <option value="jamnagar">Jamnagar</option>
+                <option value="kollam">Kollam</option>
+                <option value="gaya">Gaya</option>
+                <option value="shimla">Shimla</option>
+                <option value="pondicherry">Pondicherry</option>
+                <option value="itanagar">Itanagar</option>
+                <option value="kohima">Kohima</option>
+                <option value="gangtok">Gangtok</option>
+                <option value="aizawl">Aizawl</option>
+                <option value="shillong">Shillong</option>
+                <option value="agartala">Agartala</option>
+                <option value="panaji">Panaji</option>
+                <option value="daman">Daman</option>
+                <option value="diu">Diu</option>
+                <option value="kavaratti">Kavaratti</option>
+                <option value="port_blair">Port Blair</option>
+                <option value="silvassa">Silvassa</option>
+              </select>
+            </div>
+
+            <div class="cont8" style="padding-left: 790px;">
+              <button type="submit" style="width: 90px;">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div id="summaryForm" class="form-section">
+      <form action="/summaryForm" method="POST">
+        <div class="cont1">
+          <div class="contect" style="display: block; margin-top: 30%;">
+            <label><b>Summary</b></label>
+            <textarea name="summary" placeholder="Professional Summary:"
+              style="width: 100%; height: 90px;"></textarea><br>
+
+            <div class="cont8" style="padding-left: 790px;">
+              <button type="submit">Submit</button>
+            </div>
+          </div>
+        </div>
+      </form>
+      <!-- <form action="/summaryForm" method="POST">
+        <div class="contect" style="display: block; margin-top: 30%;">
+
+          <label><b>Summary</b></label>
+          <textarea name="summary" placeholder="Professional Summary:"
+            style="width: 100%; height: 90px;"></textarea><br>
+        </div>
+        <div class="cont8" style="padding-left: 790px;">
+          <button type="submit">Submit</button>
+        </div>
+
+      </form> -->
+    </div>
+    <div id="educationForm" class="form-section">
+      <div class="contect">
+        <form method="POST" action="/educationForm">
+
+          <div class="cont1">
+            <label for="degree"><b>Degree/Certification</b></label>
+            <select id="degree" name="degree" required>
+              <option value="">-- Select Degree --</option>
+
+              <optgroup label="School Education">
+                <option value="secondarySchool(10th)">Secondary School (10th)</option>
+                <option value="highSchool(PCM)">High School (PCM)</option>
+                <option value="highSchool(PCB)">High School (PCB)</option>
+                <option value="highSchool(Commerce)">High School (Commerce)</option>
+                <option value="highSchool(Arts)">High School (Arts)</option>
+              </optgroup>
+
+              <optgroup label="Undergraduate">
+                <option value="diploma">Diploma</option>
+                <option value="bachelorArts">Bachelor of Arts (BA)</option>
+                <option value="bachelorScience">Bachelor of Science (BSc)</option>
+                <option value="bachelorCommerce">Bachelor of Commerce (BCom)</option>
+                <option value="bachelorEngineering">Bachelor of Engineering (BE/BTech)</option>
+                <option value="bachelorBusiness">Bachelor of Business Administration (BBA)</option>
+                <option value="bachelorComputerApp">Bachelor of Computer Applications (BCA)</option>
+              </optgroup>
+
+              <optgroup label="Postgraduate">
+                <option value="masterArts">Master of Arts (MA)</option>
+                <option value="masterScience">Master of Science (MSc)</option>
+                <option value="masterCommerce">Master of Commerce (MCom)</option>
+                <option value="masterEngineering">Master of Engineering (ME/MTech)</option>
+                <option value="mba">Master of Business Administration (MBA)</option>
+                <option value="mca">Master of Computer Applications (MCA)</option>
+              </optgroup>
+
+              <optgroup label="Doctoral & Research">
+                <option value="phd">Doctor of Philosophy (PhD)</option>
+                <option value="postDoc">Post-Doctoral</option>
+              </optgroup>
+
+              <optgroup label="Other">
+                <option value="certification">Professional Certification</option>
+                <option value="vocational">Vocational Training</option>
+                <option value="other">Other</option>
+              </optgroup>
+            </select>
+
+          </div>
+          <div class="cont1">
+            <label for="fieldOfStudy"><b>Field of Study</b></label>
+            <input type="text" id="fieldOfStudy" name="fieldOfStudy" placeholder="Computer Science" required>
+          </div>
+          <div class="cont2">
+            <label for="institution"><b>Institution Name</b></label>
+            <input type="text" id="institution" name="institution" placeholder="University of California, Berkeley"
+              required>
+          </div>
+
+          <div class="cont3">
+            <label for="location"><b>Location</b></label>
+            <input type="text" id="location" name="location" placeholder="Berkeley, CA">
+          </div>
+
+          <div class="cont4">
+            <label for="startDate"><b>Start Date</b></label>
+            <input type="month" id="startDate" name="startDate" required>
+          </div>
+          <div class="cont6">
+            <label for="gpa"><b>GPA</b></label>
+            <input type="number" id="gpa" name="gpa" min="0" max="4" step="0.1" placeholder="3.8">
+          </div>
+          <div class="cont5">
+            <label for="endDate"><b>End Date</b> (or expected)</label>
+            <input type="month" id="endDate" name="endDate">
+          </div>
+          <div class="cont7">
+            <label for="description"><b>Description</b> (optional)</label>
+            <textarea id="description" name="description"
+              placeholder="Thesis topic, special projects, or achievements"></textarea>
+          </div>
+
+          <div class="cont8">
+            <button type="submit" style="width: 150px; margin-top: 40px;">Add Education</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="experienceForm" class="form-section">
+      <!-- EXPERIENCE FORM -->
+      <div class="contect">
+        <form action="/experienceForm" method="POST">
+          <div class="cont1">
+            <label for="jobTitle"><b>Job Title</b></label>
+            <input type="text" id="jobTitle" name="jobTitle" placeholder="Senior Software Engineer" required>
+          </div>
+
+          <div class="cont2">
+            <label for="company"><b>Company</b></label>
+            <input type="text" id="company" name="company" placeholder="Tech Corp Inc." required>
+          </div>
+
+          <div class="cont3">
+            <label for="location"><b>Location</b></label>
+            <input type="text" id="location" name="location" placeholder="New York, NY">
+          </div>
+
+          <div class="cont4">
+            <label for="startDate"><b>Start Date</b></label>
+            <input type="month" id="startDate" name="startDate" required>
+          </div>
+
+          <div class="cont5">
+            <label for="endDate"><b>End Date</b> (or expected)</label>
+            <input type="month" id="endDate" name="endDate">
+          </div>
+
+          <div class="cont6">
+            <label for="employmentType"><b>Employment Type</b></label>
+            <select id="employmentType" name="employmentType" required>
+              <option value="">Select Type</option>
+              <option value="full-time">Full-time</option>
+              <option value="part-time">Part-time</option>
+              <option value="contract">Contract</option>
+              <option value="internship">Internship</option>
+            </select>
+          </div>
+
+          <div class="cont7">
+            <label for="description"><b>Description</b> (optional)</label>
+            <textarea id="description" name="description"
+              placeholder="Key responsibilities and achievements"></textarea>
+          </div>
+
+          <div class="cont8">
+            <button type="submit" style="    width: 150px;
+    margin-top: 40px;">Add Experience</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="projectForm" class="form-section">
+      <!-- PROJECTS FORM -->
+      <div class="contect">
+        <form action="/projectForm" method="POST">
+          <div class="cont1">
+            <label for="projectName"><b>Project Name</b></label>
+            <input type="text" id="projectName" name="projectName" placeholder="E-commerce Website" required>
+          </div>
+
+          <div class="cont2">
+            <label for="role"><b>Your Role</b></label>
+            <input type="text" id="role" name="role" placeholder="Lead Developer" required>
+          </div>
+
+          <div class="cont3">
+            <label for="startDate"><b>Start Date</b></label>
+            <input type="month" id="startDate" name="startDate" required>
+          </div>
+
+          <div class="cont4">
+            <label for="endDate"><b>End Date</b> (or expected)</label>
+            <input type="month" id="endDate" name="endDate">
+          </div>
+
+          <div class="cont5">
+            <label for="skills"><b>Skills Used</b></label>
+            <input type="text" id="skills" name="skills" placeholder="Java, React, MySQL">
+          </div>
+
+          <div class="cont6">
+            <label for="url"><b>Project URL</b> (optional)</label>
+            <input type="url" id="url" name="url" placeholder="https://example.com">
+          </div>
+
+          <div class="cont7">
+            <label for="description"><b>Description</b> (optional)</label>
+            <textarea id="description" name="description" placeholder="Project objectives and outcomes"></textarea>
+          </div>
+
+          <div class="cont8">
+            <button type="submit" style=" width:150px;
+    margin-top: 40px;">Add Project</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+    <div id="skillsForm" class="form-section">
+      <!-- SKILLS FORM -->
+      <div class="contect">
+        <form action="/skillForm" method="POST">
+          <div class="cont1">
+            <label for="category"><b>Skill Category</b></label>
+            <select id="category" name="category" required>
+              <option value="">Select Category</option>
+              <option value="Technical">Technical</option>
+              <option value="Soft Skills">Soft Skills</option>
+              <option value="Tools & Technologies">Tools & Technologies</option>
+              <option value="Languages">Languages</option>
+            </select>
+          </div>
+
+          <div class="cont2">
+            <label for="skills"><b>Skills</b></label>
+            <input type="text" id="skills" name="skills" placeholder="Python, Team Leadership, Photoshop" required>
+          </div>
+
+          <div class="cont3">
+            <label for="proficiency"><b>Proficiency Level</b> (optional)</label>
+            <select id="proficiency" name="proficiency">
+              <option value="">Select Proficiency</option>
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+          </div>
+
+          <div class="cont4">
+            <button type="submit">Add Skills</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="involvementForm" class="form-section">
+      <!-- INNOVATION FORM -->
+      <div class="contect">
+        <form action="/inn" method="POST">
+          <div class="cont1">
+            <label for="title"><b>Innovation Title</b></label>
+            <input type="text" id="title" name="title" placeholder="AI-Powered Climate Model" required>
+          </div>
+
+          <div class="cont2">
+            <label for="date"><b>Date Developed</b></label>
+            <input type="month" id="date" name="date" required>
+          </div>
+
+          <div class="cont3">
+            <label for="associatedWith"><b>Associated With</b> (optional)</label>
+            <input type="text" id="associatedWith" name="associatedWith" placeholder="University of Tech">
+          </div>
+
+          <div class="cont4">
+            <label for="description"><b>Description</b></label>
+            <textarea id="description" name="description" placeholder="Details of the innovation and its impact"
+              required></textarea>
+          </div>
+
+          <div class="cont5">
+            <label for="url"><b>URL</b> (optional)</label>
+            <input type="url" id="url" name="url" placeholder="https://example.com/innovation">
+          </div>
+
+          <div class="cont6">
+            <button type="submit">Add Innovation</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+    <div id="certificationForm" class="form-section">
+      <!-- CERTIFICATIONS FORM -->
+      <div class="contect">
+        <form action="/cf" method="POST">
+          <div class="cont1">
+            <label for="certificationName"><b>Certification Name</b></label>
+            <input type="text" id="certificationName" name="certificationName" placeholder="AWS Certified Developer"
+              required>
+          </div>
+
+          <div class="cont2">
+            <label for="issuingOrg"><b>Issuing Organization</b></label>
+            <input type="text" id="issuingOrg" name="issuingOrg" placeholder="Amazon Web Services" required>
+          </div>
+
+          <div class="cont3">
+            <label for="dateObtained"><b>Date Obtained</b></label>
+            <input type="month" id="dateObtained" name="dateObtained" required>
+          </div>
+
+          <div class="cont4">
+            <label for="expiryDate"><b>Expiry Date</b> (optional)</label>
+            <input type="month" id="expiryDate" name="expiryDate">
+          </div>
+
+          <div class="cont5">
+            <label for="credentialID"><b>Credential ID</b> (optional)</label>
+            <input type="text" id="credentialID" name="credentialID" placeholder="A1B2C3D4">
+          </div>
+
+          <div class="cont6">
+            <label for="url"><b>URL</b> (optional)</label>
+            <input type="url" id="url" name="url" placeholder="https://example.com/certification">
+          </div>
+
+          <div class="cont7">
+            <button type="submit">Add Certification</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+    <div id="courseworkForm" class="form-section">
+      <!-- COURSEWORK FORM -->
+      <div class="contect">
+        <form action="/courseForm" method="POST">
+          <div class="cont1">
+            <label for="courseName"><b>Course Name</b></label>
+            <input type="text" id="courseName" name="courseName" placeholder="Advanced Data Structures" required>
+          </div>
+
+          <div class="cont2">
+            <label for="courseCode"><b>Course Code</b> (optional)</label>
+            <input type="text" id="courseCode" name="courseCode" placeholder="CS-301">
+          </div>
+
+          <div class="cont3">
+            <label for="institution"><b>Institution</b></label>
+            <input type="text" id="institution" name="institution" placeholder="Stanford University" required>
+          </div>
+
+          <div class="cont4">
+            <label for="department"><b>Department</b></label>
+            <input type="text" id="department" name="department" placeholder="Computer Science">
+          </div>
+
+          <div class="cont5">
+            <label for="completionDate"><b>Completion Date</b></label>
+            <input type="month" id="completionDate" name="completionDate" required>
+          </div>
+
+          <div class="cont6">
+            <label for="grade"><b>Grade</b> (optional)</label>
+            <input type="number" id="grade" name="grade" min="0" max="100" step="1" placeholder="85">
+          </div>
+
+          <div class="cont7">
+            <label for="skills"><b>Relevant Skills</b></label>
+            <input type="text" id="skills" name="skills" placeholder="Algorithm design, Complexity analysis">
+          </div>
+
+          <div class="cont8">
+            <label for="description"><b>Key Topics Covered</b></label>
+            <textarea id="description" name="description"
+              placeholder="Binary trees, Graph algorithms, Dynamic programming"></textarea>
+          </div>
+
+          <div class="cont9">
+            <label for="projects"><b>Notable Projects</b> (optional)</label>
+            <textarea id="projects" name="projects"
+              placeholder="Implemented Dijkstra's algorithm, Built a red-black tree library"></textarea>
+          </div>
+
+          <div class="cont10">
+            <button type="submit">Add Coursework</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <a href="/previewForm">
+      <div id="previewForm" class="form-section">
+        <!-- <h2>Finish & Preview</h2>
+      <div class="preview-content">
+            <p>This section will display the compiled resume based on the information provided in the forms.</p>
+            <div class="page">
+                <header>
+                    <h1>Swadesh Singh Rathore</h1>
+                    <p>+91 9256174575 | ssrathore1922@gmail.com | <a
+                            href="https://www.linkedin.com/in/swadeshsinghrathore">linkedin.com/in/swadeshsinghrathore</a>
+                    </p>
+                </header>
+
+                <div class="section">
+                    <h2>Summary</h2>
+                    <p>Motivated and detail-oriented Computer Science undergraduate specializing in Artificial
+                        Intelligence,
+                        with a solid foundation in front-end web development, database management, and project
+                        coordination.
+                        Experienced in competitive hackathons, managing outreach programs for ISRO, and collaborating on
+                        interdisciplinary projects. Passionate about leveraging technology to drive impactful solutions
+                        and
+                        eager to contribute to dynamic, innovation-driven environments.</p>
+                </div>
+
+                <div class="section">
+                    <h2>Projects</h2>
+                    <div class="item">
+                        <h3>Resume Builder & ATS Checker (Ongoing)</h3>
+                        <ul>
+                            <li>Developing a web-based platform using Flask, MySQL, HTML, CSS, and JavaScript for resume
+                                creation and ATS checking.</li>
+                            <li>Implementing an ATS scoring feature to analyze resume compatibility with job
+                                descriptions.
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="item">
+                        <h3>Vision Voice</h3>
+                        <ul>
+                            <li>Developed an AI platform to aid individuals with disabilities via sign language
+                                translation,
+                                speech-to-text, and object recognition. Used NLP, computer vision, and real-time
+                                processing
+                                for inclusivity.</li>
+                            <li>Built with Python, TensorFlow, and OpenCV for AI/ML, cross-device accessibility and
+                                real-time performance.</li>
+                        </ul>
+                    </div>
+                    <div class="item">
+                        <h3>Emotion Detection Using YOLOv7</h3>
+                        <ul>
+                            <li>Implemented a cutting-edge computer vision model using YOLOv7 to detect emotions from
+                                facial
+                                expressions, enhancing accuracy and performance.</li>
+                            <li>Managed and annotated datasets with Roboflow, optimizing data preprocessing and
+                                augmentation
+                                for improved model performance.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Education</h2>
+                    <div class="item">
+                        <h3>Bachelor of Technology in Computer Science (Artificial Intelligence)</h3>
+                        <p>Swami Keshvanand Institute of Technology (SKIT) • Jaipur, Rajasthan • September 2023 - 2027 •
+                            CGPA(9.08)</p>
+                    </div>
+                    <div class="item">
+                        <h3>High School (PCM)</h3>
+                        <p>SBS Convent School • Sikar, Rajasthan • 2022</p>
+                    </div>
+                    <div class="item">
+                        <h3>Secondary School (10th)</h3>
+                        <p>SBS Convent School • Sikar, Rajasthan • 2020</p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Experience</h2>
+                    <div class="item">
+                        <h3>Web Designer</h3>
+                        <p>MechaCraft Technologies Private Limited • June 2024 - November 2024 • Jaipur, Rajasthan</p>
+                        <ul>
+                            <li>Conceptualized user-centered web layouts using Figma, delivering cohesive and visually
+                                appealing designs aligned with branding.</li>
+                            <li>Collaborated with UI/UX designers, developers, and marketing teams to create responsive,
+                                functional websites that meet business objectives.</li>
+                        </ul>
+                    </div>
+                    <div class="item">
+                        <h3>Web Development Intern</h3>
+                        <p>Kistechnosoftware Private Limited • June 2024 - July 2024 • Jaipur, Rajasthan</p>
+                        <ul>
+                            <li>Developed and maintained responsive front-end web applications using HTML, CSS,
+                                JavaScript,
+                                and PHP, optimizing user experience and performance.</li>
+                            <li>Integrated MySQL databases for dynamic content management, enhancing data accessibility
+                                and
+                                website efficiency.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="section skills">
+                    <h2>Skills</h2>
+                    <p><strong>AI/ML & Computer Vision:</strong> YOLOv7, OpenCV, Generative AI, Emotion Detection
+                        Models,
+                        Deep Learning</p>
+                    <p><strong>Development:</strong> HTML, CSS, JavaScript, Bootstrap, PHP, MySQL</p>
+                    <p><strong>Languages:</strong> Python, C/C++, Java, JavaScript (Basics), HTML, CSS</p>
+                    <p><strong>Soft Skills:</strong> Leadership, Teamwork & Collaboration, Problem-Solving,
+                        Communication,
+                        Adaptability, Creativity</p>
+                </div>
+
+                <div class="section">
+                    <h2>Certifications</h2>
+                    <ul>
+                        <li>Web Development Internship - Kistechnosoftware Private Limited</li>
+                        <li>Advanced to Round 2 - MUJHACKX 2.0 Hackathon</li>
+                        <li>Career Essentials in Generative AI - Issued by Microsoft and LinkedIn</li>
+                        <li>Geo-data Sharing & Cyber Security from IIRS ISRO</li>
+                        <li>College Ambassador at Techfest IIT Bombay</li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <h2>Extra-Curricular Activities</h2>
+                    <ul>
+                        <li>Hackathon Participant (MUJHACKX 2.0) Manipal University Jaipur (MUJ)</li>
+                        <li>Student Coordinator, IIRS ISRO Outreach Program</li>
+                    </ul>
+                </div>
+            </div>
+        </div> -->
+      </div>
+    </a>
+
+  </div>
+
+
+<div class="mmain" style=" border: 2px solid red; width: 200px; height: 300px;">
+
+</div>
+
+  <!-- <div id="adv" class="adv">
+
+    <div class="adv1" id="adv1"></div>
+    <div class="adv2" id="adv2"></div>
+    <div class="adv3" id="adv3"></div>
+  </div>  -->
+
+
+
+
+
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+
+  <script src="../static/JS/sideBar.js"></script>
+</body>
+
+</html>
