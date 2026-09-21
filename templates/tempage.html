@@ -4,124 +4,303 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Template Store</title>
+    <title>Resume Templates - Template Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="../static/tempage.css">
 </head>
 
 <body>
 
-
-
- <div class="navbar">
-    <div class="logo"><img src="../static/Images/logo (2).png" alt="Logo"><a href="/">Resume Builder</a></div>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="logo">
+      <img src="../static/Images/logo (2).png" alt="Logo">
+      <a href="/">Resume Builder</a>
+    </div>
     <ul>
-      <li><a href="#">Features</a></li>
-      <li><a href="#">Templates</a></li>
-      <li><a href="#">Pricing</a></li>
+      <li><a href="/">Home</a></li>
+      <li><a href="/tempage" style="color: #9333ea; font-weight: 700;">Templates</a></li>
+      {% if current_user %}
+      <li><a href="/previewForm">My Resume</a></li>
+      <li><a href="/homepage">Resume Studio</a></li>
+      <li><a href="/profile">Profile</a></li>
+      {% endif %}
     </ul>
-    <div class="buttons">
-      <a href="/signup" class="btn btn-signin">Sign In</a>
-      <a href="/signup" class="btn btn-primary">Get Started Free</a>
+    <div class="buttons" style="display: flex; align-items: center; gap: 12px;">
+      {% if current_user %}
+        <a href="/previewForm" class="btn btn-primary"><i class="fa-solid fa-eye"></i> Resume Preview</a>
+        
+        <div class="user-menu-pill" title="Account Menu">
+          <div class="user-pill-btn">
+            <div class="user-avatar-badge">
+              {{ current_user.initials }}
+            </div>
+            <div class="user-pill-info">
+              <span class="user-pill-name">{{ current_user.name }}</span>
+              <span class="user-pill-tag">Online</span>
+            </div>
+            <i class="fa-solid fa-chevron-down user-pill-caret"></i>
+          </div>
+
+          <ul class="dropdown">
+            <li class="dropdown-header-user">
+              <div class="dd-name">{{ current_user.name }}</div>
+              <div class="dd-email">{{ current_user.email }}</div>
+            </li>
+            <li><a href="/profile"><i class="fa-solid fa-user" style="color: #2563eb;"></i> View Profile</a></li>
+            <li><a href="/homepage"><i class="fa-solid fa-sliders" style="color: #4b5563;"></i> Resume Studio</a></li>
+            <li><a href="/previewForm"><i class="fa-solid fa-eye" style="color: #059669;"></i> Preview Resume</a></li>
+            <li><a href="/tempage"><i class="fa-solid fa-palette" style="color: #9333ea;"></i> Template Gallery</a></li>
+            <li><a href="/logout" class="dd-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+          </ul>
+        </div>
+      {% else %}
+        <a href="/loginf" class="btn btn-signin">Sign In</a>
+        <a href="/signup" class="btn btn-primary">Get Started Free</a>
+      {% endif %}
     </div>
   </div>
 
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div style="max-width: 900px; margin: 20px auto 0 auto; padding: 0 20px;">
+        {% for category, message in messages %}
+          <div style="padding: 12px 18px; border-radius: 8px; font-size: 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px;
+            {% if category == 'danger' %}
+              background: #fef2f2; color: #991b1b; border: 1px solid #fecaca;
+            {% elif category == 'warning' %}
+              background: #fffbeb; color: #92400e; border: 1px solid #fde68a;
+            {% elif category == 'success' %}
+              background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0;
+            {% else %}
+              background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;
+            {% endif %}
+          ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-circle-check"></i>
+              <span>{{ message }}</span>
+            </div>
+            <button onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: inherit; opacity: 0.6;">&times;</button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
 
-
+  <!-- Store Header -->
+  <div style="text-align: center; margin: 20px 0 10px 0;">
+    <h1 style="font-size: 32px; font-weight: 800; color: #111827; margin-bottom: 6px;">
+      Choose Your Resume Template
+    </h1>
+    <p style="font-size: 16px; color: #6b7280; max-width: 600px; margin: 0 auto;">
+      Select from our engineered ATS-friendly, multi-column, and creative layouts. Your choice applies instantly to both live preview and PDF download.
+    </p>
+  </div>
 
   <!-- Filter Bar -->
   <div class="filter-bar">
-    <button class="active">All templates</button>
-    <button>Picture</button>
-    <button>Word</button>
-    <button>Simple</button>
-    <button>ATS</button>
-    <button>Two-column</button>
-    <button>Google Docs</button>
-    <button>See more</button>
+    <button class="filter-btn active" data-filter="all">All templates</button>
+    <button class="filter-btn" data-filter="one-column">One-column</button>
+    <button class="filter-btn" data-filter="two-column">Two-column</button>
+    <button class="filter-btn" data-filter="ats">ATS-friendly</button>
+    <button class="filter-btn" data-filter="colorful">Colorful / Tech</button>
   </div>
 
   <!-- Template Grid -->
-  <div class="template-grid">
+  <div class="template-grid" id="templateGrid">
 
-    <!-- Template Card -->
-    <div class="template-card">
-      <img src="../static/Images/temp (1).avif" alt="Defined Resume Template">
-      <h3>Defined</h3>
-    </div>
-
-    <div class="template-card">
-      <img src="../static/Images/temp (2).avif" alt="Classic Resume Template">
-      <h3>Classic</h3>
-    </div>
-
-    <div class="template-card">
-      <img src="../static/Images/temp (3).avif" alt="Essential Resume Template">
-      <h3>Essential</h3>
-    </div>
-
-    <div class="template-card">
-      <img src="../static/Images/temp (4).avif" alt="Confetti Resume Template">
-      <h3>Confetti</h3>
-    </div>
-     <div class="template-card">
-      <img src="../static/Images/temp (5).avif" alt="Defined Resume Template">
-      <h3>Professional</h3>
+    <!-- 1. Classic Executive (One-Column) -->
+    <div class="template-card {% if selected_template == 'classic' %}active-card{% endif %}" data-category="one-column">
+      <span class="template-category-tag">One-Column</span>
+      {% if selected_template == 'classic' %}
+      <span class="template-badge-top"><i class="fa-solid fa-check"></i> ACTIVE</span>
+      {% endif %}
+      <img src="../static/Images/temp (2).avif" alt="Classic Executive Template">
+      <h3>Classic Executive</h3>
+      <div class="template-desc">
+        Traditional single-column serif layout with elegant horizontal divider rules. Formal academic and corporate style.
+      </div>
+      {% if selected_template == 'classic' %}
+      <a href="/previewForm" class="btn-select-template btn-select-active">
+        <i class="fa-solid fa-check"></i> Active (Preview)
+      </a>
+      {% else %}
+      <a href="/select_template/classic" class="btn-select-template btn-select-action">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Use Template
+      </a>
+      {% endif %}
     </div>
 
-    <div class="template-card">
-      <img src="../static/Images/temp (6).avif" alt="Classic Resume Template">
-      <h3>Traditional</h3>
+    <!-- 2. Modern Tech & Colorful (Colorful) -->
+    <div class="template-card {% if selected_template == 'modern' %}active-card{% endif %}" data-category="colorful">
+      <span class="template-category-tag">Colorful</span>
+      {% if selected_template == 'modern' %}
+      <span class="template-badge-top"><i class="fa-solid fa-check"></i> ACTIVE</span>
+      {% endif %}
+      <img src="../static/Images/temp (4).avif" alt="Modern Tech Template">
+      <h3>Modern Tech & Colorful</h3>
+      <div class="template-desc">
+        Vibrant indigo header accents, modern typography, and colored pill badges for skills. Great for tech and design.
+      </div>
+      {% if selected_template == 'modern' %}
+      <a href="/previewForm" class="btn-select-template btn-select-active">
+        <i class="fa-solid fa-check"></i> Active (Preview)
+      </a>
+      {% else %}
+      <a href="/select_template/modern" class="btn-select-template btn-select-action">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Use Template
+      </a>
+      {% endif %}
     </div>
 
-    <div class="template-card">
-      <img src="../static/Images/temp (7).avif" alt="Essential Resume Template">
-      <h3>Clean</h3>
+    <!-- 3. Two-Column Professional (Two-Column) -->
+    <div class="template-card {% if selected_template == 'two_column' %}active-card{% endif %}" data-category="two-column">
+      <span class="template-category-tag">Two-Column</span>
+      {% if selected_template == 'two_column' %}
+      <span class="template-badge-top"><i class="fa-solid fa-check"></i> ACTIVE</span>
+      {% endif %}
+      <img src="../static/Images/temp (11).avif" alt="Two-Column Professional Template">
+      <h3>Two-Column Professional</h3>
+      <div class="template-desc">
+        Structured sidebar for contact, skills, and certifications, paired with a wide career column. Highly requested layout.
+      </div>
+      {% if selected_template == 'two_column' %}
+      <a href="/previewForm" class="btn-select-template btn-select-active">
+        <i class="fa-solid fa-check"></i> Active (Preview)
+      </a>
+      {% else %}
+      <a href="/select_template/two_column" class="btn-select-template btn-select-action">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Use Template
+      </a>
+      {% endif %}
     </div>
 
-    <div class="template-card">
-      <img src="../static/Images/temp (8).avif" alt="Confetti Resume Template">
-      <h3>Prime ATS</h3>
-    </div>
-     <div class="template-card">
-      <img src="../static/Images/temp (9).avif" alt="Defined Resume Template">
+    <!-- 4. Simple ATS (ATS) -->
+    <div class="template-card {% if selected_template == 'ats_simple' %}active-card{% endif %}" data-category="ats">
+      <span class="template-category-tag">ATS-Friendly</span>
+      {% if selected_template == 'ats_simple' %}
+      <span class="template-badge-top"><i class="fa-solid fa-check"></i> ACTIVE</span>
+      {% endif %}
+      <img src="../static/Images/temp (9).avif" alt="Simple ATS Template">
       <h3>Simple ATS</h3>
+      <div class="template-desc">
+        High-contrast, distraction-free minimalist layout formatted specifically for Application Tracking Systems (ATS).
+      </div>
+      {% if selected_template == 'ats_simple' %}
+      <a href="/previewForm" class="btn-select-template btn-select-active">
+        <i class="fa-solid fa-check"></i> Active (Preview)
+      </a>
+      {% else %}
+      <a href="/select_template/ats_simple" class="btn-select-template btn-select-action">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Use Template
+      </a>
+      {% endif %}
     </div>
 
-    <div class="template-card">
-      <img src="../static/Images/temp (10).avif" alt="Classic Resume Template">
-      <h3>Corporate</h3>
+    <!-- Additional Visual Variations in Gallery -->
+    <div class="template-card" data-category="one-column">
+      <span class="template-category-tag">One-Column</span>
+      <img src="../static/Images/temp (1).avif" alt="Defined Resume Template">
+      <h3>Defined Executive</h3>
+      <div class="template-desc">Clean single-column structure with standardized margins and crisp typography.</div>
+      <a href="/select_template/classic" class="btn-select-template btn-select-action">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Use Template
+      </a>
     </div>
 
-    <div class="template-card">
-      <img src="../static/Images/temp (11).avif" alt="Essential Resume Template">
-      <h3>Two column ATS</h3>
+    <div class="template-card" data-category="colorful">
+      <span class="template-category-tag">Colorful</span>
+      <img src="../static/Images/temp (3).avif" alt="Essential Resume Template">
+      <h3>Essential Creative</h3>
+      <div class="template-desc">Contemporary layout with colored subheadings and stylish skill badge highlights.</div>
+      <a href="/select_template/modern" class="btn-select-template btn-select-action">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Use Template
+      </a>
     </div>
 
-    <div class="template-card">
-      <img src="../static/Images/temp (12).avif" alt="Confetti Resume Template">
-      <h3>Calligraphic</h3>
-    </div>
-         <div class="template-card">
-      <img src="../static/Images/temp (13).avif" alt="Defined Resume Template">
-      <h3>Vivid</h3>
-    </div>
-
-    <div class="template-card">
-      <img src="../static/Images/temp (14).avif" alt="Classic Resume Template">
-      <h3>Harmonized</h3>
+    <div class="template-card" data-category="two-column">
+      <span class="template-category-tag">Two-Column</span>
+      <img src="../static/Images/temp (5).avif" alt="Professional Resume Template">
+      <h3>Corporate Two-Column</h3>
+      <div class="template-desc">Split layout optimizing horizontal space for extensive skill lists and certifications.</div>
+      <a href="/select_template/two_column" class="btn-select-template btn-select-action">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Use Template
+      </a>
     </div>
 
-    <div class="template-card">
-      <img src="../static/Images/temp (15).avif" alt="Essential Resume Template">
-      <h3>Minimalist</h3>
+    <div class="template-card" data-category="ats">
+      <span class="template-category-tag">ATS-Friendly</span>
+      <img src="../static/Images/temp (8).avif" alt="Prime ATS Template">
+      <h3>Prime ATS</h3>
+      <div class="template-desc">Single-column format engineered to ensure 100% readability across automated ATS parsers.</div>
+      <a href="/select_template/ats_simple" class="btn-select-template btn-select-action">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Use Template
+      </a>
     </div>
 
-    <div class="template-card">
-      <img src="../static/Images/temp (16).avif" alt="Confetti Resume Template">
-      <h3>Industrial</h3>
+    <div class="template-card" data-category="one-column">
+      <span class="template-category-tag">One-Column</span>
+      <img src="../static/Images/temp (6).avif" alt="Traditional Resume Template">
+      <h3>Traditional Academic</h3>
+      <div class="template-desc">Classic academic flow suitable for researchers, educators, and senior executives.</div>
+      <a href="/select_template/classic" class="btn-select-template btn-select-action">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Use Template
+      </a>
+    </div>
+
+    <div class="template-card" data-category="two-column">
+      <span class="template-category-tag">Two-Column</span>
+      <img src="../static/Images/temp (10).avif" alt="Corporate Resume Template">
+      <h3>Modern Compact</h3>
+      <div class="template-desc">Dense yet readable two-column layout ideal for multi-faceted career profiles.</div>
+      <a href="/select_template/two_column" class="btn-select-template btn-select-action">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Use Template
+      </a>
+    </div>
+
+    <div class="template-card" data-category="colorful">
+      <span class="template-category-tag">Colorful</span>
+      <img src="../static/Images/temp (13).avif" alt="Vivid Resume Template">
+      <h3>Vivid Palette</h3>
+      <div class="template-desc">Eye-catching color scheme designed to make a memorable first impression.</div>
+      <a href="/select_template/modern" class="btn-select-template btn-select-action">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Use Template
+      </a>
+    </div>
+
+    <div class="template-card" data-category="ats">
+      <span class="template-category-tag">ATS-Friendly</span>
+      <img src="../static/Images/temp (15).avif" alt="Minimalist Resume Template">
+      <h3>Clean Minimalist</h3>
+      <div class="template-desc">Standard fonts and crisp contrast focused entirely on achievements and skills.</div>
+      <a href="/select_template/ats_simple" class="btn-select-template btn-select-action">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Use Template
+      </a>
     </div>
 
   </div>
+
+  <!-- Client-Side Filter Script -->
+  <script>
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.getAttribute('data-filter');
+        const cards = document.querySelectorAll('.template-card');
+
+        cards.forEach(card => {
+          if (filter === 'all' || card.getAttribute('data-category') === filter) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
 
 </body>
 

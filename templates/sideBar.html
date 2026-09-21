@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Resume Builder</title>
   <link rel="icone" href="../static/Images/logo__2_-removebg-preview.png" type="image/x-icon">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.2.0/fonts/remixicon.css">
@@ -12,22 +13,80 @@
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&amp;display=swap">
   <link rel="stylesheet" href="../static/sideBar.css">
-  <!-- <link rel="stylesheet" href="../static/preview.css"> -->
-  <!-- <link rel="stylesheet" href="./css/form.css"> -->
-
+  <link id="liveTemplateCss" rel="stylesheet" href="../static/templates/{{ selected_template or 'classic' }}.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 
 <body>
 
+  <!-- Flash Toast Notifications -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div id="flashToastContainer" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 10px; max-width: 500px; width: 90%;">
+        {% for category, message in messages %}
+          <div class="flash-toast" style="padding: 12px 18px; border-radius: 8px; font-size: 14px; font-family: 'Poppins', sans-serif; font-weight: 500; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+            {% if category == 'danger' %}
+              background: #fef2f2; color: #991b1b; border: 1px solid #fecaca;
+            {% elif category == 'warning' %}
+              background: #fffbeb; color: #92400e; border: 1px solid #fde68a;
+            {% elif category == 'success' %}
+              background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0;
+            {% else %}
+              background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;
+            {% endif %}
+          ">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              {% if category == 'danger' %}
+                <i class="fa-solid fa-circle-exclamation" style="font-size: 16px;"></i>
+              {% elif category == 'warning' %}
+                <i class="fa-solid fa-triangle-exclamation" style="font-size: 16px;"></i>
+              {% elif category == 'success' %}
+                <i class="fa-solid fa-circle-check" style="font-size: 16px;"></i>
+              {% else %}
+                <i class="fa-solid fa-circle-info" style="font-size: 16px;"></i>
+              {% endif %}
+              <span>{{ message }}</span>
+            </div>
+            <button onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 20px; line-height: 1; cursor: pointer; color: inherit; opacity: 0.7;">&times;</button>
+          </div>
+        {% endfor %}
+      </div>
+      <script>
+        setTimeout(function() {
+          var container = document.getElementById('flashToastContainer');
+          if (container) {
+            container.style.transition = 'opacity 0.5s ease';
+            container.style.opacity = '0';
+            setTimeout(function() { container.remove(); }, 500);
+          }
+        }, 4500);
+      </script>
+    {% endif %}
+  {% endwith %}
+
   <!-- profile -->
-  <div class="pro"><i class="fa-solid fa-circle-user"
-      style="font-size: 36px; color: transparent; background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+  <div class="pro" title="User Account Menu">
+    <div class="user-pill-btn">
+      <div class="user-avatar-badge">
+        {{ current_user.initials if current_user else 'U' }}
+      </div>
+      <div class="user-pill-info">
+        <span class="user-pill-name">{{ current_user.name if current_user else (user['name'] if user else 'My Profile') }}</span>
+        <span class="user-pill-tag">{% if current_user and current_user.is_admin %}Admin{% else %}Online{% endif %}</span>
+      </div>
+      <i class="fa-solid fa-chevron-down user-pill-caret"></i>
+    </div>
 
     <ul class="dropdown">
-      <li><a href="/profile">Profile</a></li>
-      <li><a href="/logout">Logout</a></li>
-      <li><a href="/settings">Settings</a></li>
+      <li class="dropdown-header-user">
+        <div class="dd-name">{{ current_user.name if current_user else (user['name'] if user else 'Candidate') }}</div>
+        <div class="dd-email">{{ current_user.email if current_user else (user['email'] if user else '') }}</div>
+      </li>
+      <li><a href="/profile"><i class="fa-solid fa-user" style="color: #2563eb;"></i> View Profile</a></li>
+      <li><a href="/previewForm"><i class="fa-solid fa-eye" style="color: #059669;"></i> Preview Resume</a></li>
+      <li><a href="/tempage"><i class="fa-solid fa-palette" style="color: #9333ea;"></i> Template Gallery</a></li>
+      <li><a href="/homepage"><i class="fa-solid fa-sliders" style="color: #4b5563;"></i> Resume Studio</a></li>
+      <li><a href="/logout" class="dd-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
     </ul>
   </div>
 
@@ -37,7 +96,7 @@
 
 
 
-  <div id="mainContent" class="hidden">
+  <div id="mainContent">
 
     <div class="layout has-sidebar fixed-sidebar fixed-header" style="position: absolute;">
       <aside id="sidebar" class="sidebar break-point-sm has-bg-image">
@@ -290,883 +349,510 @@
       <div class="overlay"></div>
     </div>
   </div>
-  <div class="content" style="margin-left: 18%;
-    margin-top: 60px;">
+  <!-- ==================== DUAL-PANE RESUME BUILDER STUDIO ==================== -->
+  <div id="builderWorkspace" class="studio-layout">
+    <div class="studio-grid">
+      <!-- LEFT COLUMN: FORM EDITOR -->
+      <div id="editorPane">
+        <div class="editor-card">
+          <div class="editor-card-header">
+            <div class="editor-card-title">
+              <i id="activeSectionIcon" class="fa-solid fa-phone"></i>
+              <div>
+                <h3 id="activeSectionTitle">Personal & Contact Information</h3>
+                <p>Fill out your details below. Your resume updates in real-time as you type!</p>
+              </div>
+            </div>
+            <a href="/previewForm" class="btn-item-action btn-edit" title="View Full Resume">
+              <i class="fa-solid fa-eye"></i> Full View
+            </a>
+          </div>
 
-    <div id="formContainer">
-      <div id="contactForm" class="form-section">
-        <div class="contect">
-          <form method="POST" action="/contectForm">
+          <div id="formContainer">
+            <!-- 1. CONTACT FORM -->
+            <div id="contactForm" class="form-section active">
+              <form method="POST" action="/contectForm" class="studio-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-            <div class="cont1">
-              <label for="FullName"><b>Full Name</b></label>
-              <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
+                <div>
+                  <label for="fullName">Full Name <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="text" id="fullName" name="fullName" value="{{ contacts.fullname if contacts and contacts.fullname else (user.name if user else '') }}" placeholder="e.g. Swadesh Singh" required>
+                </div>
+
+                <div>
+                  <label for="email">Email Address <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="email" id="email" name="email" value="{{ contacts.email if contacts and contacts.email else (user.email if user else '') }}" placeholder="e.g. swadesh@example.com" required>
+                </div>
+
+                <div>
+                  <label for="phone">Phone Number <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="tel" id="phone" name="phone" value="{{ contacts.phone if contacts and contacts.phone else '' }}" placeholder="e.g. 9876543210" required>
+                </div>
+
+                <div>
+                  <label for="p_web">Personal Website / Portfolio <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="p_web" name="p_web" value="{{ contacts.p_web if contacts and contacts.p_web else '' }}" placeholder="e.g. swadeshsingh.dev">
+                </div>
+
+                <div>
+                  <label for="l_web">LinkedIn Profile <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="l_web" name="l_web" value="{{ contacts.l_web if contacts and contacts.l_web else '' }}" placeholder="e.g. linkedin.com/in/swadesh">
+                </div>
+
+                <div>
+                  <label for="City">City <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="City" name="City" value="{{ contacts.City if contacts and contacts.City else '' }}" placeholder="e.g. Jaipur">
+                </div>
+
+                <div>
+                  <label for="State">State / Region <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="State" name="State" value="{{ contacts.State if contacts and contacts.State else '' }}" placeholder="e.g. Rajasthan">
+                </div>
+
+                <div>
+                  <label for="Country">Country <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="Country" name="Country" value="{{ contacts.Country if contacts and contacts.Country else 'India' }}" placeholder="e.g. India">
+                </div>
+
+                <div class="form-actions-row">
+                  <button type="submit" class="btn-studio-submit">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Contact Info
+                  </button>
+                </div>
+              </form>
             </div>
 
-            <div class="cont2">
-              <label for="email"><b>Email Address </b></label>
-              <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            <!-- 2. SUMMARY FORM -->
+            <div id="summaryForm" class="form-section">
+              <form action="/summaryForm" method="POST" class="studio-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="form-group-full">
+                  <label for="summaryText">Professional Summary <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <textarea id="summaryText" name="summary" placeholder="Passionate and results-driven software engineer with expertise in Python, full-stack web applications, and AI integrations..." rows="5" required>{{ summary.summary_text if summary and summary.summary_text else '' }}</textarea>
+                </div>
+
+                <div class="form-actions-row">
+                  <button type="submit" class="btn-studio-submit">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Summary
+                  </button>
+                </div>
+              </form>
             </div>
 
+            <!-- 3. EDUCATION FORM -->
+            <div id="educationForm" class="form-section">
+              <form method="POST" action="/educationForm" class="studio-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-            <div class="cont3">
-              <label for="phone"><b>Phone Number</b></label>
-              <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                <div>
+                  <label for="institution">Institution / University <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="text" id="institution" name="institution" placeholder="e.g. Swami Keshvanand Institute of Technology" required>
+                </div>
+
+                <div>
+                  <label for="degree">Degree / Qualification <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="text" id="degree" name="degree" placeholder="e.g. B.Tech Computer Science" required>
+                </div>
+
+                <div>
+                  <label for="fieldOfStudy">Field of Study <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="fieldOfStudy" name="fieldOfStudy" placeholder="e.g. Artificial Intelligence">
+                </div>
+
+                <div>
+                  <label for="gpa">GPA / Percentage <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="gpa" name="gpa" placeholder="e.g. 9.08 CGPA or 85%">
+                </div>
+
+                <div>
+                  <label for="eduStartDate">Start Date <span class="field-badge opt">Optional</span></label>
+                  <input type="month" id="eduStartDate" name="startDate">
+                </div>
+
+                <div>
+                  <label for="eduEndDate">End Date (or expected) <span class="field-badge opt">Optional</span></label>
+                  <input type="month" id="eduEndDate" name="endDate">
+                </div>
+
+                <div class="form-group-full">
+                  <label for="eduDescription">Key Highlights & Honors <span class="field-badge opt">Optional</span></label>
+                  <textarea id="eduDescription" name="description" placeholder="Dean's list, relevant coursework, academic honors..." rows="3"></textarea>
+                </div>
+
+                <div class="form-actions-row">
+                  <button type="submit" class="btn-studio-submit">
+                    <i class="fa-solid fa-plus"></i> Add Education
+                  </button>
+                </div>
+              </form>
             </div>
 
-            <div class="cont4">
-              <label for="address"><b>Personal website </b>or relevant link</label>
-              <input id="text" name="p_web" placeholder="https://www.charlesbloomberg.com"></input>
+            <!-- 4. EXPERIENCE FORM -->
+            <div id="experienceForm" class="form-section">
+              <form action="/experienceForm" method="POST" class="studio-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div>
+                  <label for="jobTitle">Job Title <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="text" id="jobTitle" name="jobTitle" placeholder="e.g. Full-Stack Developer" required>
+                </div>
+
+                <div>
+                  <label for="company">Company / Organization <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="text" id="company" name="company" placeholder="e.g. MechaCraft Technologies" required>
+                </div>
+
+                <div>
+                  <label for="expLocation">Location <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="expLocation" name="location" placeholder="e.g. Jaipur, Rajasthan">
+                </div>
+
+                <div>
+                  <label for="employmentType">Employment Type <span class="field-badge opt">Optional</span></label>
+                  <select id="employmentType" name="employmentType">
+                    <option value="Full-time">Full-time</option>
+                    <option value="Part-time">Part-time</option>
+                    <option value="Contract">Contract</option>
+                    <option value="Internship">Internship</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label for="expStartDate">Start Date <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="month" id="expStartDate" name="startDate" required>
+                </div>
+
+                <div>
+                  <label for="expEndDate">End Date (leave blank if current) <span class="field-badge opt">Optional</span></label>
+                  <input type="month" id="expEndDate" name="endDate">
+                </div>
+
+                <div class="form-group-full">
+                  <label for="expDescription">Responsibilities & Achievements <span class="field-badge opt">Optional</span></label>
+                  <textarea id="expDescription" name="description" placeholder="• Developed responsive web applications using Python & Flask&#10;• Reduced latency by 35% through query optimization" rows="4"></textarea>
+                </div>
+
+                <div class="form-actions-row">
+                  <button type="submit" class="btn-studio-submit">
+                    <i class="fa-solid fa-plus"></i> Add Experience
+                  </button>
+                </div>
+              </form>
             </div>
 
+            <!-- 5. PROJECTS FORM -->
+            <div id="projectForm" class="form-section">
+              <form action="/projectForm" method="POST" class="studio-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-            <div class="cont5">
-              <label for="address"><b>Linkedin </b>URL</label>
-              <input id="text" name="l_web" placeholder="https://www.charlesbloomberg.com"></input>
+                <div>
+                  <label for="projectName">Project Name <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="text" id="projectName" name="projectName" placeholder="e.g. Vision Voice AI Platform" required>
+                </div>
+
+                <div>
+                  <label for="role">Your Role <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="role" name="role" placeholder="e.g. Lead Developer">
+                </div>
+
+                <div>
+                  <label for="projSkills">Skills / Tech Stack <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="projSkills" name="skills" placeholder="e.g. Python, TensorFlow, OpenCV, Flask">
+                </div>
+
+                <div>
+                  <label for="projUrl">Live URL / Repository <span class="field-badge opt">Optional</span></label>
+                  <input type="url" id="projUrl" name="url" placeholder="https://github.com/username/project">
+                </div>
+
+                <div>
+                  <label for="projStartDate">Start Date <span class="field-badge opt">Optional</span></label>
+                  <input type="month" id="projStartDate" name="startDate">
+                </div>
+
+                <div>
+                  <label for="projEndDate">End Date <span class="field-badge opt">Optional</span></label>
+                  <input type="month" id="projEndDate" name="endDate">
+                </div>
+
+                <div class="form-group-full">
+                  <label for="projDescription">Overview & Key Contributions <span class="field-badge opt">Optional</span></label>
+                  <textarea id="projDescription" name="description" placeholder="Developed an AI platform aiding people with disabilities using real-time computer vision..." rows="3"></textarea>
+                </div>
+
+                <div class="form-actions-row">
+                  <button type="submit" class="btn-studio-submit">
+                    <i class="fa-solid fa-plus"></i> Add Project
+                  </button>
+                </div>
+              </form>
             </div>
 
+            <!-- 6. SKILLS FORM -->
+            <div id="skillsForm" class="form-section">
+              <form action="/skillForm" method="POST" class="studio-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-            <div class="cont7">
-              <label for="Country"><b>Country</b></label>
-              <select id="Country" name="Country">
-                <option value="">Select a Country</option>
-                <option value="afghanistan">Afghanistan</option>
-                <option value="albania">Albania</option>
-                <option value="algeria">Algeria</option>
-                <option value="andorra">Andorra</option>
-                <option value="angola">Angola</option>
-                <option value="argentina">Argentina</option>
-                <option value="armenia">Armenia</option>
-                <option value="australia">Australia</option>
-                <option value="austria">Austria</option>
-                <option value="azerbaijan">Azerbaijan</option>
-                <option value="bahamas">Bahamas</option>
-                <option value="bahrain">Bahrain</option>
-                <option value="bangladesh">Bangladesh</option>
-                <option value="barbados">Barbados</option>
-                <option value="belarus">Belarus</option>
-                <option value="belgium">Belgium</option>
-                <option value="belize">Belize</option>
-                <option value="benin">Benin</option>
-                <option value="bhutan">Bhutan</option>
-                <option value="bolivia">Bolivia</option>
-                <option value="bosnia_herzegovina">Bosnia and Herzegovina</option>
-                <option value="botswana">Botswana</option>
-                <option value="brazil">Brazil</option>
-                <option value="brunei">Brunei</option>
-                <option value="bulgaria">Bulgaria</option>
-                <option value="burkina_faso">Burkina Faso</option>
-                <option value="burundi">Burundi</option>
-                <option value="cambodia">Cambodia</option>
-                <option value="cameroon">Cameroon</option>
-                <option value="canada">Canada</option>
-                <option value="cape_verde">Cape Verde</option>
-                <option value="central_african_republic">Central African Republic</option>
-                <option value="chad">Chad</option>
-                <option value="chile">Chile</option>
-                <option value="china">China</option>
-                <option value="colombia">Colombia</option>
-                <option value="comoros">Comoros</option>
-                <option value="congo">Congo</option>
-                <option value="costa_rica">Costa Rica</option>
-                <option value="croatia">Croatia</option>
-                <option value="cuba">Cuba</option>
-                <option value="cyprus">Cyprus</option>
-                <option value="czech_republic">Czech Republic</option>
-                <option value="denmark">Denmark</option>
-                <option value="djibouti">Djibouti</option>
-                <option value="dominican_republic">Dominican Republic</option>
-                <option value="ecuador">Ecuador</option>
-                <option value="egypt">Egypt</option>
-                <option value="el_salvador">El Salvador</option>
-                <option value="estonia">Estonia</option>
-                <option value="eswatini">Eswatini</option>
-                <option value="ethiopia">Ethiopia</option>
-                <option value="fiji">Fiji</option>
-                <option value="finland">Finland</option>
-                <option value="france">France</option>
-                <option value="gabon">Gabon</option>
-                <option value="gambia">Gambia</option>
-                <option value="georgia">Georgia</option>
-                <option value="germany">Germany</option>
-                <option value="ghana">Ghana</option>
-                <option value="greece">Greece</option>
-                <option value="guatemala">Guatemala</option>
-                <option value="haiti">Haiti</option>
-                <option value="honduras">Honduras</option>
-                <option value="hungary">Hungary</option>
-                <option value="iceland">Iceland</option>
-                <option value="india">India</option>
-                <option value="indonesia">Indonesia</option>
-                <option value="iran">Iran</option>
-                <option value="iraq">Iraq</option>
-                <option value="ireland">Ireland</option>
-                <option value="israel">Israel</option>
-                <option value="italy">Italy</option>
-                <option value="jamaica">Jamaica</option>
-                <option value="japan">Japan</option>
-                <option value="jordan">Jordan</option>
-                <option value="kazakhstan">Kazakhstan</option>
-                <option value="kenya">Kenya</option>
-                <option value="kuwait">Kuwait</option>
-                <option value="kyrgyzstan">Kyrgyzstan</option>
-                <option value="laos">Laos</option>
-                <option value="latvia">Latvia</option>
-                <option value="lebanon">Lebanon</option>
-                <option value="libya">Libya</option>
-                <option value="luxembourg">Luxembourg</option>
-                <option value="madagascar">Madagascar</option>
-                <option value="malaysia">Malaysia</option>
-                <option value="maldives">Maldives</option>
-                <option value="mexico">Mexico</option>
-                <option value="mongolia">Mongolia</option>
-                <option value="morocco">Morocco</option>
-                <option value="myanmar">Myanmar</option>
-                <option value="nepal">Nepal</option>
-                <option value="netherlands">Netherlands</option>
-                <option value="new_zealand">New Zealand</option>
-                <option value="nigeria">Nigeria</option>
-                <option value="north_korea">North Korea</option>
-                <option value="norway">Norway</option>
-                <option value="oman">Oman</option>
-                <option value="pakistan">Pakistan</option>
-                <option value="palestine">Palestine</option>
-                <option value="panama">Panama</option>
-                <option value="paraguay">Paraguay</option>
-                <option value="peru">Peru</option>
-                <option value="philippines">Philippines</option>
-                <option value="poland">Poland</option>
-                <option value="portugal">Portugal</option>
-                <option value="qatar">Qatar</option>
-                <option value="romania">Romania</option>
-                <option value="russia">Russia</option>
-                <option value="rwanda">Rwanda</option>
-                <option value="saudi_arabia">Saudi Arabia</option>
-                <option value="senegal">Senegal</option>
-                <option value="serbia">Serbia</option>
-                <option value="singapore">Singapore</option>
-                <option value="south_africa">South Africa</option>
-                <option value="south_korea">South Korea</option>
-                <option value="spain">Spain</option>
-                <option value="sri_lanka">Sri Lanka</option>
-                <option value="sudan">Sudan</option>
-                <option value="sweden">Sweden</option>
-                <option value="switzerland">Switzerland</option>
-                <option value="syria">Syria</option>
-                <option value="taiwan">Taiwan</option>
-                <option value="tajikistan">Tajikistan</option>
-                <option value="thailand">Thailand</option>
-                <option value="tunisia">Tunisia</option>
-                <option value="turkey">Turkey</option>
-                <option value="uganda">Uganda</option>
-                <option value="ukraine">Ukraine</option>
-                <option value="united_arab_emirates">United Arab Emirates</option>
-                <option value="united_kingdom">United Kingdom</option>
-                <option value="united_states">United States</option>
-                <option value="uzbekistan">Uzbekistan</option>
-                <option value="vietnam">Vietnam</option>
-                <option value="yemen">Yemen</option>
-                <option value="zimbabwe">Zimbabwe</option>
-              </select>
+                <div>
+                  <label for="skillCategory">Category <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <select id="skillCategory" name="category" required>
+                    <option value="Languages">Languages</option>
+                    <option value="Frameworks & Libraries">Frameworks & Libraries</option>
+                    <option value="AI / Machine Learning">AI / Machine Learning</option>
+                    <option value="Databases & Cloud">Databases & Cloud</option>
+                    <option value="Tools & Technologies">Tools & Technologies</option>
+                    <option value="Soft Skills">Soft Skills</option>
+                  </select>
+                </div>
 
+                <div>
+                  <label for="skillProficiency">Proficiency <span class="field-badge opt">Optional</span></label>
+                  <select id="skillProficiency" name="proficiency">
+                    <option value="">None</option>
+                    <option value="Advanced">Advanced</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Beginner">Beginner</option>
+                  </select>
+                </div>
+
+                <div class="form-group-full">
+                  <label for="skillsList">Skills (comma-separated) <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="text" id="skillsList" name="skills" placeholder="e.g. Python, Flask, SQLite, JavaScript, Git" required>
+                </div>
+
+                <div class="form-actions-row">
+                  <button type="submit" class="btn-studio-submit">
+                    <i class="fa-solid fa-plus"></i> Add Skill Group
+                  </button>
+                </div>
+              </form>
             </div>
 
-            <div class="cont7">
-              <label for="Country"><b>State</b></label>
-              <select id="State" name="State">
+            <!-- 7. INNOVATIONS FORM -->
+            <div id="involvementForm" class="form-section">
+              <form action="/inn" method="POST" class="studio-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                <option value="">Select a State</option>
-                <option value="andhra_pradesh">Andhra Pradesh</option>
-                <option value="arunachal_pradesh">Arunachal Pradesh</option>
-                <option value="assam">Assam</option>
-                <option value="bihar">Bihar</option>
-                <option value="chhattisgarh">Chhattisgarh</option>
-                <option value="goa">Goa</option>
-                <option value="gujarat">Gujarat</option>
-                <option value="haryana">Haryana</option>
-                <option value="himachal_pradesh">Himachal Pradesh</option>
-                <option value="jharkhand">Jharkhand</option>
-                <option value="karnataka">Karnataka</option>
-                <option value="kerala">Kerala</option>
-                <option value="madhya_pradesh">Madhya Pradesh</option>
-                <option value="maharashtra">Maharashtra</option>
-                <option value="manipur">Manipur</option>
-                <option value="meghalaya">Meghalaya</option>
-                <option value="mizoram">Mizoram</option>
-                <option value="nagaland">Nagaland</option>
-                <option value="odisha">Odisha</option>
-                <option value="punjab">Punjab</option>
-                <option value="rajasthan">Rajasthan</option>
-                <option value="sikkim">Sikkim</option>
-                <option value="tamil_nadu">Tamil Nadu</option>
-                <option value="telangana">Telangana</option>
-                <option value="tripura">Tripura</option>
-                <option value="uttar_pradesh">Uttar Pradesh</option>
-                <option value="uttarakhand">Uttarakhand</option>
-                <option value="west_bengal">West Bengal</option>
-                <option value="andaman_nicobar">Andaman and Nicobar Islands</option>
-                <option value="chandigarh">Chandigarh</option>
-                <option value="dadra_nagar_haveli">Dadra and Nagar Haveli and Daman and Diu</option>
-                <option value="delhi">Delhi</option>
-                <option value="jammu_kashmir">Jammu and Kashmir</option>
-                <option value="ladakh">Ladakh</option>
-                <option value="lakshadweep">Lakshadweep</option>
-                <option value="puducherry">Puducherry</option>
-              </select>
+                <div>
+                  <label for="innTitle">Activity / Achievement Title <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="text" id="innTitle" name="title" placeholder="e.g. ISRO Outreach Ambassador" required>
+                </div>
 
+                <div>
+                  <label for="innDate">Date / Year <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="innDate" name="date" placeholder="e.g. 2024">
+                </div>
+
+                <div>
+                  <label for="associatedWith">Associated Organization <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="associatedWith" name="associatedWith" placeholder="e.g. IIRS ISRO / Techfest">
+                </div>
+
+                <div>
+                  <label for="innUrl">Verification URL <span class="field-badge opt">Optional</span></label>
+                  <input type="url" id="innUrl" name="url" placeholder="https://...">
+                </div>
+
+                <div class="form-group-full">
+                  <label for="innDescription">Details & Impact <span class="field-badge opt">Optional</span></label>
+                  <textarea id="innDescription" name="description" placeholder="Student coordinator for geo-data sharing outreach, engaging 500+ participants..." rows="3"></textarea>
+                </div>
+
+                <div class="form-actions-row">
+                  <button type="submit" class="btn-studio-submit">
+                    <i class="fa-solid fa-plus"></i> Add Activity
+                  </button>
+                </div>
+              </form>
             </div>
 
-            <div class="cont7">
-              <label for="City"><b>City</b></label>
-              <select id="City" name="City">
-                <option value="">Select City</option>
-                <option value="mumbai">Mumbai</option>
-                <option value="delhi">Delhi</option>
-                <option value="bangalore">Bangalore</option>
-                <option value="hyderabad">Hyderabad</option>
-                <option value="ahmedabad">Ahmedabad</option>
-                <option value="chennai">Chennai</option>
-                <option value="kolkata">Kolkata</option>
-                <option value="surat">Surat</option>
-                <option value="pune">Pune</option>
-                <option value="jaipur">Jaipur</option>
-                <option value="lucknow">Lucknow</option>
-                <option value="kanpur">Kanpur</option>
-                <option value="nagpur">Nagpur</option>
-                <option value="indore">Indore</option>
-                <option value="thane">Thane</option>
-                <option value="bhopal">Bhopal</option>
-                <option value="visakhapatnam">Visakhapatnam</option>
-                <option value="patna">Patna</option>
-                <option value="vadodara">Vadodara</option>
-                <option value="ghaziabad">Ghaziabad</option>
-                <option value="ludhiana">Ludhiana</option>
-                <option value="agra">Agra</option>
-                <option value="nashik">Nashik</option>
-                <option value="faridabad">Faridabad</option>
-                <option value="meerut">Meerut</option>
-                <option value="rajkot">Rajkot</option>
-                <option value="varanasi">Varanasi</option>
-                <option value="srinagar">Srinagar</option>
-                <option value="aurangabad">Aurangabad</option>
-                <option value="dhanbad">Dhanbad</option>
-                <option value="amritsar">Amritsar</option>
-                <option value="noida">Noida</option>
-                <option value="allahabad">Allahabad</option>
-                <option value="ranchi">Ranchi</option>
-                <option value="howrah">Howrah</option>
-                <option value="jabalpur">Jabalpur</option>
-                <option value="gwalior">Gwalior</option>
-                <option value="coimbatore">Coimbatore</option>
-                <option value="vijayawada">Vijayawada</option>
-                <option value="jodhpur">Jodhpur</option>
-                <option value="madurai">Madurai</option>
-                <option value="raipur">Raipur</option>
-                <option value="kota">Kota</option>
-                <option value="guwahati">Guwahati</option>
-                <option value="chandigarh">Chandigarh</option>
-                <option value="solapur">Solapur</option>
-                <option value="hubli">Hubli</option>
-                <option value="mysore">Mysore</option>
-                <option value="tiruchirappalli">Tiruchirappalli</option>
-                <option value="bhubaneswar">Bhubaneswar</option>
-                <option value="salem">Salem</option>
-                <option value="warangal">Warangal</option>
-                <option value="guntur">Guntur</option>
-                <option value="bhiwandi">Bhiwandi</option>
-                <option value="saharanpur">Saharanpur</option>
-                <option value="gorakhpur">Gorakhpur</option>
-                <option value="bikaner">Bikaner</option>
-                <option value="amravati">Amravati</option>
-                <option value="noida">Noida</option>
-                <option value="jamshedpur">Jamshedpur</option>
-                <option value="bhilai">Bhilai</option>
-                <option value="cuttack">Cuttack</option>
-                <option value="kochi">Kochi</option>
-                <option value="udaipur">Udaipur</option>
-                <option value="vellore">Vellore</option>
-                <option value="ajmer">Ajmer</option>
-                <option value="jhansi">Jhansi</option>
-                <option value="ulhasnagar">Ulhasnagar</option>
-                <option value="sangli">Sangli</option>
-                <option value="asansol">Asansol</option>
-                <option value="nanded">Nanded</option>
-                <option value="dehradun">Dehradun</option>
-                <option value="jamnagar">Jamnagar</option>
-                <option value="kollam">Kollam</option>
-                <option value="gaya">Gaya</option>
-                <option value="shimla">Shimla</option>
-                <option value="pondicherry">Pondicherry</option>
-                <option value="itanagar">Itanagar</option>
-                <option value="kohima">Kohima</option>
-                <option value="gangtok">Gangtok</option>
-                <option value="aizawl">Aizawl</option>
-                <option value="shillong">Shillong</option>
-                <option value="agartala">Agartala</option>
-                <option value="panaji">Panaji</option>
-                <option value="daman">Daman</option>
-                <option value="diu">Diu</option>
-                <option value="kavaratti">Kavaratti</option>
-                <option value="port_blair">Port Blair</option>
-                <option value="silvassa">Silvassa</option>
-              </select>
+            <!-- 8. CERTIFICATIONS FORM -->
+            <div id="certificationForm" class="form-section">
+              <form action="/cf" method="POST" class="studio-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div>
+                  <label for="certificationName">Certification Name <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="text" id="certificationName" name="certificationName" placeholder="e.g. Generative AI Career Essentials" required>
+                </div>
+
+                <div>
+                  <label for="issuingOrg">Issuing Organization <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="text" id="issuingOrg" name="issuingOrg" placeholder="e.g. Microsoft and LinkedIn" required>
+                </div>
+
+                <div>
+                  <label for="dateObtained">Date Issued <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="month" id="dateObtained" name="dateObtained" required>
+                </div>
+
+                <div>
+                  <label for="expiryDate">Expiration Date <span class="field-badge opt">Optional</span></label>
+                  <input type="month" id="expiryDate" name="expiryDate">
+                </div>
+
+                <div>
+                  <label for="credentialID">Credential ID <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="credentialID" name="credentialID" placeholder="e.g. MS-12345">
+                </div>
+
+                <div>
+                  <label for="certUrl">Credential URL <span class="field-badge opt">Optional</span></label>
+                  <input type="url" id="certUrl" name="url" placeholder="https://...">
+                </div>
+
+                <div class="form-actions-row">
+                  <button type="submit" class="btn-studio-submit">
+                    <i class="fa-solid fa-plus"></i> Add Certification
+                  </button>
+                </div>
+              </form>
             </div>
 
-            <div class="cont8" style="padding-left: 790px;">
-              <button type="submit" style="width: 90px;">Submit</button>
+            <!-- 9. COURSEWORK FORM -->
+            <div id="courseworkForm" class="form-section">
+              <form action="/courseForm" method="POST" class="studio-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div>
+                  <label for="courseName">Course Name <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="text" id="courseName" name="courseName" placeholder="e.g. Advanced Data Structures & Algorithms" required>
+                </div>
+
+                <div>
+                  <label for="courseInstitution">Institution / Provider <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="text" id="courseInstitution" name="institution" placeholder="e.g. Stanford Online" required>
+                </div>
+
+                <div>
+                  <label for="courseCode">Course Code <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="courseCode" name="courseCode" placeholder="e.g. CS161">
+                </div>
+
+                <div>
+                  <label for="completionDate">Completion Date <span class="field-badge req"><i class="fa-solid fa-asterisk"></i> Required</span></label>
+                  <input type="month" id="completionDate" name="completionDate" required>
+                </div>
+
+                <div>
+                  <label for="courseGrade">Grade / Score <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="courseGrade" name="grade" placeholder="e.g. A+ or 96%">
+                </div>
+
+                <div>
+                  <label for="courseSkills">Skills Covered <span class="field-badge opt">Optional</span></label>
+                  <input type="text" id="courseSkills" name="skills" placeholder="e.g. Dynamic Programming, Graph Theory">
+                </div>
+
+                <div class="form-group-full">
+                  <label for="courseDescription">Key Topics <span class="field-badge opt">Optional</span></label>
+                  <textarea id="courseDescription" name="description" placeholder="Algorithmic problem solving, asymptotic analysis..." rows="3"></textarea>
+                </div>
+
+                <div class="form-actions-row">
+                  <button type="submit" class="btn-studio-submit">
+                    <i class="fa-solid fa-plus"></i> Add Coursework
+                  </button>
+                </div>
+              </form>
             </div>
-          </form>
+          </div>
+
+          <!-- Saved Items in Current Section -->
+          <div id="savedItemsContainer" class="saved-items-container"></div>
+
+          <!-- Walk-in Step Navigation Bar -->
+          <div class="studio-walkin-bar">
+            <div class="walkin-step-counter">
+              <span id="walkinStepNumber">Step 1 of 9</span>:
+              <strong id="walkinStepName">Contact Details</strong>
+            </div>
+            <div class="walkin-actions">
+              <button type="button" id="walkinPrevBtn" class="btn-walkin" disabled>
+                <i class="fa-solid fa-arrow-left"></i> Previous
+              </button>
+              <button type="button" id="walkinNextBtn" class="btn-walkin btn-walkin-next">
+                Next Step <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: STICKY LIVE RESUME PREVIEW -->
+      <div id="previewPane">
+        <!-- Live Toolbar -->
+        <div class="studio-preview-toolbar no-print">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="live-indicator-badge">
+              <span class="pulse-dot"></span> Live Sync
+            </span>
+          </div>
+
+          <!-- Template Switcher Pills -->
+          <div class="studio-template-switcher" title="Switch layout in real time">
+            <span class="studio-template-pill {% if selected_template == 'classic' %}active{% endif %}" data-template="classic">Classic</span>
+            <span class="studio-template-pill {% if selected_template == 'modern' %}active{% endif %}" data-template="modern">Modern</span>
+            <span class="studio-template-pill {% if selected_template == 'two_column' %}active{% endif %}" data-template="two_column">2-Col</span>
+            <span class="studio-template-pill {% if selected_template == 'ats_simple' %}active{% endif %}" data-template="ats_simple">ATS</span>
+          </div>
+
+          <!-- Zoom & Actions -->
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <div class="studio-zoom-controls">
+              <button type="button" id="zoomOutBtn" class="btn-zoom" title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
+              <span id="zoomLevelDisplay" class="zoom-level-text">85%</span>
+              <button type="button" id="zoomInBtn" class="btn-zoom" title="Zoom In"><i class="fa-solid fa-plus"></i></button>
+              <button type="button" id="zoomFitBtn" class="btn-zoom" title="Fit to Pane"><i class="fa-solid fa-expand"></i></button>
+            </div>
+            <a id="pdfDownloadBtn" href="/dpw/{{ user.user_id if user else 1 }}?template={{ selected_template }}" class="btn-studio-pdf" title="Download PDF Resume">
+              <i class="fa-solid fa-file-arrow-down"></i> PDF
+            </a>
+          </div>
+        </div>
+
+        <!-- Canvas Viewport -->
+        <div id="previewCanvasWrap">
+          <div id="liveResumePage" class="page template-{{ selected_template }}">
+            <!-- Header -->
+            <header class="resume-header">
+              <h1 id="liveHeaderName">{{ contacts.fullname if contacts and contacts.fullname else (user.name if user else 'Your Full Name') }}</h1>
+              <p id="liveHeaderContact" class="header-contact">
+                {% if contacts %}
+                  {% if contacts.phone %}+91 {{ contacts.phone }} | {% endif %}
+                  {% if contacts.email %}{{ contacts.email }} | {% endif %}
+                  {% if contacts.p_web %}<a href="https://www.{{ contacts.p_web }}" target="_blank">{{ contacts.p_web }}</a>{% endif %}
+                  {% if contacts.City %} | {{ contacts.City }}, {{ contacts.State }}{% endif %}
+                {% else %}
+                  Phone | Email | LinkedIn | Location
+                {% endif %}
+              </p>
+            </header>
+
+            <!-- Summary -->
+            <div id="liveSummarySection" class="section section-summary {% if not summary or not summary.summary_text %}hidden-section{% endif %}">
+              <h2>Summary</h2>
+              <p id="liveSummaryContent">{{ summary.summary_text if summary and summary.summary_text else '' }}</p>
+            </div>
+
+            <!-- Resume Body (Dynamic 1-col or 2-col) -->
+            <div id="liveResumeBody" class="resume-body">
+              <!-- Rendered dynamically by live_preview.js -->
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div id="summaryForm" class="form-section">
-      <form action="/summaryForm" method="POST">
-        <div class="cont1">
-          <div class="contect" style="display: block; margin-top: 30%;">
-            <label><b>Summary</b></label>
-            <textarea name="summary" placeholder="Professional Summary:"
-              style="width: 100%; height: 90px;"></textarea><br>
-
-            <div class="cont8" style="padding-left: 790px;">
-              <button type="submit">Submit</button>
-            </div>
-          </div>
-        </div>
-      </form>
-      <!-- <form action="/summaryForm" method="POST">
-        <div class="contect" style="display: block; margin-top: 30%;">
-
-          <label><b>Summary</b></label>
-          <textarea name="summary" placeholder="Professional Summary:"
-            style="width: 100%; height: 90px;"></textarea><br>
-        </div>
-        <div class="cont8" style="padding-left: 790px;">
-          <button type="submit">Submit</button>
-        </div>
-
-      </form> -->
-    </div>
-    <div id="educationForm" class="form-section">
-      <div class="contect">
-        <form method="POST" action="/educationForm">
-
-          <div class="cont1">
-            <label for="degree"><b>Degree/Certification</b></label>
-            <select id="degree" name="degree" required>
-              <option value="">-- Select Degree --</option>
-
-              <optgroup label="School Education">
-                <option value="secondarySchool(10th)">Secondary School (10th)</option>
-                <option value="highSchool(PCM)">High School (PCM)</option>
-                <option value="highSchool(PCB)">High School (PCB)</option>
-                <option value="highSchool(Commerce)">High School (Commerce)</option>
-                <option value="highSchool(Arts)">High School (Arts)</option>
-              </optgroup>
-
-              <optgroup label="Undergraduate">
-                <option value="diploma">Diploma</option>
-                <option value="bachelorArts">Bachelor of Arts (BA)</option>
-                <option value="bachelorScience">Bachelor of Science (BSc)</option>
-                <option value="bachelorCommerce">Bachelor of Commerce (BCom)</option>
-                <option value="bachelorEngineering">Bachelor of Engineering (BE/BTech)</option>
-                <option value="bachelorBusiness">Bachelor of Business Administration (BBA)</option>
-                <option value="bachelorComputerApp">Bachelor of Computer Applications (BCA)</option>
-              </optgroup>
-
-              <optgroup label="Postgraduate">
-                <option value="masterArts">Master of Arts (MA)</option>
-                <option value="masterScience">Master of Science (MSc)</option>
-                <option value="masterCommerce">Master of Commerce (MCom)</option>
-                <option value="masterEngineering">Master of Engineering (ME/MTech)</option>
-                <option value="mba">Master of Business Administration (MBA)</option>
-                <option value="mca">Master of Computer Applications (MCA)</option>
-              </optgroup>
-
-              <optgroup label="Doctoral & Research">
-                <option value="phd">Doctor of Philosophy (PhD)</option>
-                <option value="postDoc">Post-Doctoral</option>
-              </optgroup>
-
-              <optgroup label="Other">
-                <option value="certification">Professional Certification</option>
-                <option value="vocational">Vocational Training</option>
-                <option value="other">Other</option>
-              </optgroup>
-            </select>
-
-          </div>
-          <div class="cont1">
-            <label for="fieldOfStudy"><b>Field of Study</b></label>
-            <input type="text" id="fieldOfStudy" name="fieldOfStudy" placeholder="Computer Science" required>
-          </div>
-          <div class="cont2">
-            <label for="institution"><b>Institution Name</b></label>
-            <input type="text" id="institution" name="institution" placeholder="University of California, Berkeley"
-              required>
-          </div>
-
-          <div class="cont3">
-            <label for="location"><b>Location</b></label>
-            <input type="text" id="location" name="location" placeholder="Berkeley, CA">
-          </div>
-
-          <div class="cont4">
-            <label for="startDate"><b>Start Date</b></label>
-            <input type="month" id="startDate" name="startDate" required>
-          </div>
-          <div class="cont6">
-            <label for="gpa"><b>GPA</b></label>
-            <input type="number" id="gpa" name="gpa" min="0" max="4" step="0.1" placeholder="3.8">
-          </div>
-          <div class="cont5">
-            <label for="endDate"><b>End Date</b> (or expected)</label>
-            <input type="month" id="endDate" name="endDate">
-          </div>
-          <div class="cont7">
-            <label for="description"><b>Description</b> (optional)</label>
-            <textarea id="description" name="description"
-              placeholder="Thesis topic, special projects, or achievements"></textarea>
-          </div>
-
-          <div class="cont8">
-            <button type="submit" style="width: 150px; margin-top: 40px;">Add Education</button>
-          </div>
-        </form>
-      </div>
-    </div>
-    <div id="experienceForm" class="form-section">
-      <!-- EXPERIENCE FORM -->
-      <div class="contect">
-        <form action="/experienceForm" method="POST">
-          <div class="cont1">
-            <label for="jobTitle"><b>Job Title</b></label>
-            <input type="text" id="jobTitle" name="jobTitle" placeholder="Senior Software Engineer" required>
-          </div>
-
-          <div class="cont2">
-            <label for="company"><b>Company</b></label>
-            <input type="text" id="company" name="company" placeholder="Tech Corp Inc." required>
-          </div>
-
-          <div class="cont3">
-            <label for="location"><b>Location</b></label>
-            <input type="text" id="location" name="location" placeholder="New York, NY">
-          </div>
-
-          <div class="cont4">
-            <label for="startDate"><b>Start Date</b></label>
-            <input type="month" id="startDate" name="startDate" required>
-          </div>
-
-          <div class="cont5">
-            <label for="endDate"><b>End Date</b> (or expected)</label>
-            <input type="month" id="endDate" name="endDate">
-          </div>
-
-          <div class="cont6">
-            <label for="employmentType"><b>Employment Type</b></label>
-            <select id="employmentType" name="employmentType" required>
-              <option value="">Select Type</option>
-              <option value="full-time">Full-time</option>
-              <option value="part-time">Part-time</option>
-              <option value="contract">Contract</option>
-              <option value="internship">Internship</option>
-            </select>
-          </div>
-
-          <div class="cont7">
-            <label for="description"><b>Description</b> (optional)</label>
-            <textarea id="description" name="description"
-              placeholder="Key responsibilities and achievements"></textarea>
-          </div>
-
-          <div class="cont8">
-            <button type="submit" style="    width: 150px;
-    margin-top: 40px;">Add Experience</button>
-          </div>
-        </form>
-      </div>
-    </div>
-    <div id="projectForm" class="form-section">
-      <!-- PROJECTS FORM -->
-      <div class="contect">
-        <form action="/projectForm" method="POST">
-          <div class="cont1">
-            <label for="projectName"><b>Project Name</b></label>
-            <input type="text" id="projectName" name="projectName" placeholder="E-commerce Website" required>
-          </div>
-
-          <div class="cont2">
-            <label for="role"><b>Your Role</b></label>
-            <input type="text" id="role" name="role" placeholder="Lead Developer" required>
-          </div>
-
-          <div class="cont3">
-            <label for="startDate"><b>Start Date</b></label>
-            <input type="month" id="startDate" name="startDate" required>
-          </div>
-
-          <div class="cont4">
-            <label for="endDate"><b>End Date</b> (or expected)</label>
-            <input type="month" id="endDate" name="endDate">
-          </div>
-
-          <div class="cont5">
-            <label for="skills"><b>Skills Used</b></label>
-            <input type="text" id="skills" name="skills" placeholder="Java, React, MySQL">
-          </div>
-
-          <div class="cont6">
-            <label for="url"><b>Project URL</b> (optional)</label>
-            <input type="url" id="url" name="url" placeholder="https://example.com">
-          </div>
-
-          <div class="cont7">
-            <label for="description"><b>Description</b> (optional)</label>
-            <textarea id="description" name="description" placeholder="Project objectives and outcomes"></textarea>
-          </div>
-
-          <div class="cont8">
-            <button type="submit" style=" width:150px;
-    margin-top: 40px;">Add Project</button>
-          </div>
-        </form>
-      </div>
-
-    </div>
-    <div id="skillsForm" class="form-section">
-      <!-- SKILLS FORM -->
-      <div class="contect">
-        <form action="/skillForm" method="POST">
-          <div class="cont1">
-            <label for="category"><b>Skill Category</b></label>
-            <select id="category" name="category" required>
-              <option value="">Select Category</option>
-              <option value="Technical">Technical</option>
-              <option value="Soft Skills">Soft Skills</option>
-              <option value="Tools & Technologies">Tools & Technologies</option>
-              <option value="Languages">Languages</option>
-            </select>
-          </div>
-
-          <div class="cont2">
-            <label for="skills"><b>Skills</b></label>
-            <input type="text" id="skills" name="skills" placeholder="Python, Team Leadership, Photoshop" required>
-          </div>
-
-          <div class="cont3">
-            <label for="proficiency"><b>Proficiency Level</b> (optional)</label>
-            <select id="proficiency" name="proficiency">
-              <option value="">Select Proficiency</option>
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-            </select>
-          </div>
-
-          <div class="cont4">
-            <button type="submit">Add Skills</button>
-          </div>
-        </form>
-      </div>
-    </div>
-    <div id="involvementForm" class="form-section">
-      <!-- INNOVATION FORM -->
-      <div class="contect">
-        <form action="/inn" method="POST">
-          <div class="cont1">
-            <label for="title"><b>Innovation Title</b></label>
-            <input type="text" id="title" name="title" placeholder="AI-Powered Climate Model" required>
-          </div>
-
-          <div class="cont2">
-            <label for="date"><b>Date Developed</b></label>
-            <input type="month" id="date" name="date" required>
-          </div>
-
-          <div class="cont3">
-            <label for="associatedWith"><b>Associated With</b> (optional)</label>
-            <input type="text" id="associatedWith" name="associatedWith" placeholder="University of Tech">
-          </div>
-
-          <div class="cont4">
-            <label for="description"><b>Description</b></label>
-            <textarea id="description" name="description" placeholder="Details of the innovation and its impact"
-              required></textarea>
-          </div>
-
-          <div class="cont5">
-            <label for="url"><b>URL</b> (optional)</label>
-            <input type="url" id="url" name="url" placeholder="https://example.com/innovation">
-          </div>
-
-          <div class="cont6">
-            <button type="submit">Add Innovation</button>
-          </div>
-        </form>
-      </div>
-
-    </div>
-    <div id="certificationForm" class="form-section">
-      <!-- CERTIFICATIONS FORM -->
-      <div class="contect">
-        <form action="/cf" method="POST">
-          <div class="cont1">
-            <label for="certificationName"><b>Certification Name</b></label>
-            <input type="text" id="certificationName" name="certificationName" placeholder="AWS Certified Developer"
-              required>
-          </div>
-
-          <div class="cont2">
-            <label for="issuingOrg"><b>Issuing Organization</b></label>
-            <input type="text" id="issuingOrg" name="issuingOrg" placeholder="Amazon Web Services" required>
-          </div>
-
-          <div class="cont3">
-            <label for="dateObtained"><b>Date Obtained</b></label>
-            <input type="month" id="dateObtained" name="dateObtained" required>
-          </div>
-
-          <div class="cont4">
-            <label for="expiryDate"><b>Expiry Date</b> (optional)</label>
-            <input type="month" id="expiryDate" name="expiryDate">
-          </div>
-
-          <div class="cont5">
-            <label for="credentialID"><b>Credential ID</b> (optional)</label>
-            <input type="text" id="credentialID" name="credentialID" placeholder="A1B2C3D4">
-          </div>
-
-          <div class="cont6">
-            <label for="url"><b>URL</b> (optional)</label>
-            <input type="url" id="url" name="url" placeholder="https://example.com/certification">
-          </div>
-
-          <div class="cont7">
-            <button type="submit">Add Certification</button>
-          </div>
-        </form>
-      </div>
-
-    </div>
-    <div id="courseworkForm" class="form-section">
-      <!-- COURSEWORK FORM -->
-      <div class="contect">
-        <form action="/courseForm" method="POST">
-          <div class="cont1">
-            <label for="courseName"><b>Course Name</b></label>
-            <input type="text" id="courseName" name="courseName" placeholder="Advanced Data Structures" required>
-          </div>
-
-          <div class="cont2">
-            <label for="courseCode"><b>Course Code</b> (optional)</label>
-            <input type="text" id="courseCode" name="courseCode" placeholder="CS-301">
-          </div>
-
-          <div class="cont3">
-            <label for="institution"><b>Institution</b></label>
-            <input type="text" id="institution" name="institution" placeholder="Stanford University" required>
-          </div>
-
-          <div class="cont4">
-            <label for="department"><b>Department</b></label>
-            <input type="text" id="department" name="department" placeholder="Computer Science">
-          </div>
-
-          <div class="cont5">
-            <label for="completionDate"><b>Completion Date</b></label>
-            <input type="month" id="completionDate" name="completionDate" required>
-          </div>
-
-          <div class="cont6">
-            <label for="grade"><b>Grade</b> (optional)</label>
-            <input type="number" id="grade" name="grade" min="0" max="100" step="1" placeholder="85">
-          </div>
-
-          <div class="cont7">
-            <label for="skills"><b>Relevant Skills</b></label>
-            <input type="text" id="skills" name="skills" placeholder="Algorithm design, Complexity analysis">
-          </div>
-
-          <div class="cont8">
-            <label for="description"><b>Key Topics Covered</b></label>
-            <textarea id="description" name="description"
-              placeholder="Binary trees, Graph algorithms, Dynamic programming"></textarea>
-          </div>
-
-          <div class="cont9">
-            <label for="projects"><b>Notable Projects</b> (optional)</label>
-            <textarea id="projects" name="projects"
-              placeholder="Implemented Dijkstra's algorithm, Built a red-black tree library"></textarea>
-          </div>
-
-          <div class="cont10">
-            <button type="submit">Add Coursework</button>
-          </div>
-        </form>
-      </div>
-    </div>
-    <a href="/previewForm">
-      <div id="previewForm" class="form-section">
-        <!-- <h2>Finish & Preview</h2>
-      <div class="preview-content">
-            <p>This section will display the compiled resume based on the information provided in the forms.</p>
-            <div class="page">
-                <header>
-                    <h1>Swadesh Singh Rathore</h1>
-                    <p>+91 9256174575 | ssrathore1922@gmail.com | <a
-                            href="https://www.linkedin.com/in/swadeshsinghrathore">linkedin.com/in/swadeshsinghrathore</a>
-                    </p>
-                </header>
-
-                <div class="section">
-                    <h2>Summary</h2>
-                    <p>Motivated and detail-oriented Computer Science undergraduate specializing in Artificial
-                        Intelligence,
-                        with a solid foundation in front-end web development, database management, and project
-                        coordination.
-                        Experienced in competitive hackathons, managing outreach programs for ISRO, and collaborating on
-                        interdisciplinary projects. Passionate about leveraging technology to drive impactful solutions
-                        and
-                        eager to contribute to dynamic, innovation-driven environments.</p>
-                </div>
-
-                <div class="section">
-                    <h2>Projects</h2>
-                    <div class="item">
-                        <h3>Resume Builder & ATS Checker (Ongoing)</h3>
-                        <ul>
-                            <li>Developing a web-based platform using Flask, MySQL, HTML, CSS, and JavaScript for resume
-                                creation and ATS checking.</li>
-                            <li>Implementing an ATS scoring feature to analyze resume compatibility with job
-                                descriptions.
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="item">
-                        <h3>Vision Voice</h3>
-                        <ul>
-                            <li>Developed an AI platform to aid individuals with disabilities via sign language
-                                translation,
-                                speech-to-text, and object recognition. Used NLP, computer vision, and real-time
-                                processing
-                                for inclusivity.</li>
-                            <li>Built with Python, TensorFlow, and OpenCV for AI/ML, cross-device accessibility and
-                                real-time performance.</li>
-                        </ul>
-                    </div>
-                    <div class="item">
-                        <h3>Emotion Detection Using YOLOv7</h3>
-                        <ul>
-                            <li>Implemented a cutting-edge computer vision model using YOLOv7 to detect emotions from
-                                facial
-                                expressions, enhancing accuracy and performance.</li>
-                            <li>Managed and annotated datasets with Roboflow, optimizing data preprocessing and
-                                augmentation
-                                for improved model performance.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h2>Education</h2>
-                    <div class="item">
-                        <h3>Bachelor of Technology in Computer Science (Artificial Intelligence)</h3>
-                        <p>Swami Keshvanand Institute of Technology (SKIT) • Jaipur, Rajasthan • September 2023 - 2027 •
-                            CGPA(9.08)</p>
-                    </div>
-                    <div class="item">
-                        <h3>High School (PCM)</h3>
-                        <p>SBS Convent School • Sikar, Rajasthan • 2022</p>
-                    </div>
-                    <div class="item">
-                        <h3>Secondary School (10th)</h3>
-                        <p>SBS Convent School • Sikar, Rajasthan • 2020</p>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h2>Experience</h2>
-                    <div class="item">
-                        <h3>Web Designer</h3>
-                        <p>MechaCraft Technologies Private Limited • June 2024 - November 2024 • Jaipur, Rajasthan</p>
-                        <ul>
-                            <li>Conceptualized user-centered web layouts using Figma, delivering cohesive and visually
-                                appealing designs aligned with branding.</li>
-                            <li>Collaborated with UI/UX designers, developers, and marketing teams to create responsive,
-                                functional websites that meet business objectives.</li>
-                        </ul>
-                    </div>
-                    <div class="item">
-                        <h3>Web Development Intern</h3>
-                        <p>Kistechnosoftware Private Limited • June 2024 - July 2024 • Jaipur, Rajasthan</p>
-                        <ul>
-                            <li>Developed and maintained responsive front-end web applications using HTML, CSS,
-                                JavaScript,
-                                and PHP, optimizing user experience and performance.</li>
-                            <li>Integrated MySQL databases for dynamic content management, enhancing data accessibility
-                                and
-                                website efficiency.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="section skills">
-                    <h2>Skills</h2>
-                    <p><strong>AI/ML & Computer Vision:</strong> YOLOv7, OpenCV, Generative AI, Emotion Detection
-                        Models,
-                        Deep Learning</p>
-                    <p><strong>Development:</strong> HTML, CSS, JavaScript, Bootstrap, PHP, MySQL</p>
-                    <p><strong>Languages:</strong> Python, C/C++, Java, JavaScript (Basics), HTML, CSS</p>
-                    <p><strong>Soft Skills:</strong> Leadership, Teamwork & Collaboration, Problem-Solving,
-                        Communication,
-                        Adaptability, Creativity</p>
-                </div>
-
-                <div class="section">
-                    <h2>Certifications</h2>
-                    <ul>
-                        <li>Web Development Internship - Kistechnosoftware Private Limited</li>
-                        <li>Advanced to Round 2 - MUJHACKX 2.0 Hackathon</li>
-                        <li>Career Essentials in Generative AI - Issued by Microsoft and LinkedIn</li>
-                        <li>Geo-data Sharing & Cyber Security from IIRS ISRO</li>
-                        <li>College Ambassador at Techfest IIT Bombay</li>
-                    </ul>
-                </div>
-
-                <div class="section">
-                    <h2>Extra-Curricular Activities</h2>
-                    <ul>
-                        <li>Hackathon Participant (MUJHACKX 2.0) Manipal University Jaipur (MUJ)</li>
-                        <li>Student Coordinator, IIRS ISRO Outreach Program</li>
-                    </ul>
-                </div>
-            </div>
-        </div> -->
-      </div>
-    </a>
-
   </div>
 
-
-<div class="mmain" style=" border: 2px solid red; width: 200px; height: 300px;">
-
-</div>
-
-  <!-- <div id="adv" class="adv">
-
-    <div class="adv1" id="adv1"></div>
-    <div class="adv2" id="adv2"></div>
-    <div class="adv3" id="adv3"></div>
-  </div>  -->
-
-
-
-
+  <script>
+    window.INITIAL_RESUME = {{ resume_data|tojson if resume_data else '{}' }};
+  </script>
 
   <script src="https://unpkg.com/@popperjs/core@2"></script>
-
   <script src="../static/JS/sideBar.js"></script>
+  <script src="../static/JS/live_preview.js"></script>
 </body>
 
 </html>

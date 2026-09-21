@@ -1,0 +1,142 @@
+/* Simple ATS-Friendly Resume Template (Minimalist & Machine-Readable) */
+.page {
+    background: #ffffff;
+    margin: 0 auto;
+    padding: 24px 30px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #000000;
+    width: 860px;
+    box-sizing: border-box;
+    line-height: 1.4;
+    text-align: left;
+}
+
+/* Header */
+.resume-header {
+    text-align: left;
+    border-bottom: 2px solid #000000;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.resume-header h1 {
+    font-size: 26px;
+    font-weight: bold;
+    margin: 0 0 4px 0;
+    color: #000000;
+    text-transform: uppercase;
+}
+
+.resume-header p, .header-contact {
+    font-size: 13px;
+    color: #111111;
+    margin: 2px 0;
+}
+
+.resume-header a {
+    color: #000000;
+    text-decoration: underline;
+}
+
+/* Single Column Flow */
+.resume-body {
+    display: block;
+    width: 100%;
+}
+
+.resume-main-col {
+    display: block;
+    width: 100%;
+}
+
+.resume-sidebar-col {
+    display: block;
+    width: 100%;
+}
+
+/* Sections */
+.section {
+    margin-bottom: 12px;
+}
+
+.section h2 {
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #000000;
+    border-bottom: 1px solid #000000;
+    padding-bottom: 2px;
+    margin: 10px 0 4px 0;
+    letter-spacing: 0.5px;
+}
+
+.section p {
+    font-size: 13px;
+    margin: 3px 0;
+    color: #111111;
+}
+
+/* Items */
+.item {
+    margin-bottom: 8px;
+}
+
+.item h3 {
+    font-size: 13.5px;
+    font-weight: bold;
+    color: #000000;
+    margin: 0;
+}
+
+.item-subtitle {
+    font-size: 13px;
+    font-weight: normal;
+    color: #222222;
+}
+
+.item-meta {
+    font-size: 12.5px;
+    color: #333333;
+    margin: 1px 0 2px 0;
+}
+
+.item p {
+    font-size: 13px;
+    margin: 2px 0;
+    color: #111111;
+}
+
+.item ul, .section ul {
+    margin: 2px 0 4px 0;
+    padding-left: 18px;
+}
+
+.item li, .section li {
+    font-size: 13px;
+    color: #111111;
+    margin-bottom: 2px;
+}
+
+/* Skills, Certs, Coursework */
+.skill-row {
+    font-size: 13px;
+    margin-bottom: 3px;
+    color: #111111;
+}
+
+.skill-row strong {
+    color: #000000;
+}
+
+.skill-proficiency {
+    font-size: 12px;
+    color: #333333;
+}
+
+.project-url {
+    font-size: 12.5px;
+    color: #000000;
+    text-decoration: underline;
+    display: inline-block;
+    margin: 1px 0 2px 0;
+}

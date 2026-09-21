@@ -17,12 +17,42 @@
     <div class="logo"><img src="../static/Images/logo (2).png" alt="Logo"><a href="/">Resume Builder</a></div>
     <ul>
       <li><a href="#">Features</a></li>
-      <li><a href="#">Templates</a></li>
+      <li><a href="/tempage">Templates</a></li>
       <li><a href="#">Pricing</a></li>
     </ul>
-    <div class="buttons">
-      <a href="/signup" class="btn btn-signin">Sign In</a>
-      <a href="/login" class="btn btn-primary">Get Started Free</a>
+    <div class="buttons" style="display: flex; align-items: center; gap: 12px;">
+      {% if session.get('is_admin') %}
+        <a href="/admin" class="btn btn-primary"><i class="fa-solid fa-shield-halved"></i> Admin Console</a>
+      {% elif current_user %}
+        <a href="/homepage" class="btn btn-primary"><i class="fa-solid fa-house"></i> Resume Studio</a>
+        
+        <div class="user-menu-pill" title="Account Menu">
+          <div class="user-pill-btn">
+            <div class="user-avatar-badge">
+              {{ current_user.initials }}
+            </div>
+            <div class="user-pill-info">
+              <span class="user-pill-name">{{ current_user.name }}</span>
+              <span class="user-pill-tag">Online</span>
+            </div>
+            <i class="fa-solid fa-chevron-down user-pill-caret"></i>
+          </div>
+
+          <ul class="dropdown">
+            <li class="dropdown-header-user">
+              <div class="dd-name">{{ current_user.name }}</div>
+              <div class="dd-email">{{ current_user.email }}</div>
+            </li>
+            <li><a href="/profile"><i class="fa-solid fa-user" style="color: #2563eb;"></i> View Profile</a></li>
+            <li><a href="/homepage"><i class="fa-solid fa-sliders" style="color: #4b5563;"></i> Resume Studio</a></li>
+            <li><a href="/previewForm"><i class="fa-solid fa-eye" style="color: #059669;"></i> Preview Resume</a></li>
+            <li><a href="/tempage"><i class="fa-solid fa-palette" style="color: #9333ea;"></i> Template Gallery</a></li>
+            <li><a href="/logout" class="dd-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+          </ul>
+        </div>
+      {% else %}
+        <a href="/login" class="btn btn-signin"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a>
+      {% endif %}
     </div>
   </div>
 <div class="main_content">
@@ -36,8 +66,14 @@
     </p>
 
     <div class="actions">
-      <a href="/signup" class="btn btn-primary">Create Resume Free →</a>
-      <a href="/tempage" class="btn btn-signin">View Templates</a>
+      {% if session.get('user_id') %}
+        <a href="/homepage" class="btn btn-primary">Go to Resume Builder →</a>
+      {% elif session.get('is_admin') %}
+        <a href="/admin" class="btn btn-primary">Go to Admin Console →</a>
+      {% else %}
+        <a href="/login?next=/homepage" class="btn btn-primary">Create Resume Free →</a>
+      {% endif %}
+      <a href="/tempage" class="btn btn-signin"><i class="fa-solid fa-palette"></i> View Templates</a>
     </div>
 
     <div class="ratings">

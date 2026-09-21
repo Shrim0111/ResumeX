@@ -1,0 +1,172 @@
+/* Two-Column Professional Resume Template (Sidebar + Main Column) */
+.page {
+    background: #ffffff;
+    margin: 0 auto;
+    padding: 20px 24px;
+    font-family: 'Segoe UI', -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    color: #1f2937;
+    width: 860px;
+    box-sizing: border-box;
+    line-height: 1.45;
+    text-align: left;
+}
+
+/* Header */
+.resume-header {
+    border-bottom: 2px solid #0284c7;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.resume-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    color: #0369a1;
+    letter-spacing: -0.3px;
+}
+
+.resume-header p, .header-contact {
+    font-size: 13.5px;
+    color: #475569;
+    margin: 3px 0;
+}
+
+.resume-header a {
+    color: #0284c7;
+    text-decoration: none;
+}
+
+/* Two-Column Table-Cell Layout */
+.resume-body {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+/* Sidebar Column (Left: 32%) */
+.resume-sidebar-col {
+    display: table-cell;
+    width: 32%;
+    background-color: #f8fafc;
+    border-right: 1px solid #e2e8f0;
+    padding: 10px 14px 14px 10px;
+    vertical-align: top;
+    box-sizing: border-box;
+}
+
+.resume-sidebar-col .section {
+    margin-bottom: 16px;
+}
+
+.resume-sidebar-col h2 {
+    font-size: 13.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #0f172a;
+    border-bottom: 1.5px solid #0284c7;
+    padding-bottom: 3px;
+    margin: 6px 0 8px 0;
+}
+
+/* Main Column (Right: 68%) */
+.resume-main-col {
+    display: table-cell;
+    width: 68%;
+    padding: 10px 10px 14px 18px;
+    vertical-align: top;
+    box-sizing: border-box;
+}
+
+.resume-main-col .section {
+    margin-bottom: 16px;
+}
+
+.resume-main-col h2 {
+    font-size: 14.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #0369a1;
+    border-bottom: 1.5px solid #e2e8f0;
+    padding-bottom: 3px;
+    margin: 6px 0 8px 0;
+}
+
+.section p {
+    font-size: 13px;
+    margin: 4px 0 6px 0;
+    color: #334155;
+}
+
+/* Items */
+.item {
+    margin-bottom: 10px;
+}
+
+.item h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.item-subtitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0284c7;
+}
+
+.item-meta {
+    font-size: 12px;
+    color: #64748b;
+    margin: 1px 0 3px 0;
+}
+
+.item p {
+    font-size: 13px;
+    margin: 2px 0;
+    color: #334155;
+}
+
+.item ul, .section ul {
+    margin: 3px 0 5px 0;
+    padding-left: 16px;
+}
+
+.item li, .section li {
+    font-size: 12.5px;
+    color: #334155;
+    margin-bottom: 3px;
+}
+
+/* Sidebar Specific Items */
+.skill-row {
+    font-size: 12.5px;
+    margin-bottom: 5px;
+    color: #334155;
+    line-height: 1.35;
+}
+
+.skill-row strong {
+    color: #0f172a;
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-bottom: 1px;
+}
+
+.skill-proficiency {
+    font-size: 11px;
+    color: #0284c7;
+    font-weight: 600;
+}
+
+.project-url {
+    font-size: 12px;
+    color: #0284c7;
+    text-decoration: underline;
+    display: block;
+    margin: 1px 0 3px 0;
+}

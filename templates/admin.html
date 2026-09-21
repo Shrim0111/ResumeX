@@ -4,72 +4,657 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="../static/css/admin.css">
+  <title>Admin Dashboard - Resume Builder</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #f4f6f9;
+      color: #1f2937;
+      min-height: 100vh;
+      padding-top: 80px;
+      padding-bottom: 60px;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 40px;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+    }
+
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .navbar .logo img {
+      width: 35px;
+    }
+
+    .navbar .logo a {
+      text-decoration: none;
+      color: #1f2937;
+    }
+
+    .admin-badge {
+      background: linear-gradient(135deg, #2563eb, #9333ea);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 8px;
+    }
+
+    .navbar .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn-nav {
+      padding: 8px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-logout {
+      background: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+
+    .btn-logout:hover {
+      background: #dc2626;
+      color: white;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header Banner */
+    .dashboard-header {
+      margin-bottom: 28px;
+    }
+
+    .dashboard-header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dashboard-header p {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    /* KPI Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 14px;
+      padding: 22px 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      border: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+    }
+
+    .stat-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .stat-icon.users {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+
+    .stat-icon.projects {
+      background: #fdf2f8;
+      color: #db2777;
+    }
+
+    .stat-icon.education {
+      background: #f5f3ff;
+      color: #7c3aed;
+    }
+
+    .stat-icon.experience {
+      background: #ecfdf5;
+      color: #059669;
+    }
+
+    .stat-info h3 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.2;
+    }
+
+    .stat-info span {
+      font-size: 13px;
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    /* Table Container Card */
+    .table-card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      border: 1px solid #e5e7eb;
+      overflow: hidden;
+    }
+
+    .table-toolbar {
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #f3f4f6;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .table-toolbar h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 13.5px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+    }
+
+    /* Table */
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    thead th {
+      background: #f9fafb;
+      padding: 14px 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #4b5563;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    tbody td {
+      padding: 16px 20px;
+      font-size: 13.5px;
+      border-bottom: 1px solid #f3f4f6;
+      vertical-align: middle;
+    }
+
+    tbody tr:hover {
+      background: #faf5ff;
+    }
+
+    .user-profile-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .user-name-box h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .user-name-box span {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .badge-count {
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      border-radius: 6px;
+      margin-right: 4px;
+      margin-bottom: 3px;
+    }
+
+    .badge-edu {
+      background: #ede9fe;
+      color: #6d28d9;
+    }
+
+    .badge-proj {
+      background: #fce7f3;
+      color: #be185d;
+    }
+
+    .badge-exp {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .badge-skill {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    /* Actions */
+    .action-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action-view {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      background: #eff6ff;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s;
+    }
+
+    .btn-action-view:hover {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-action-pdf {
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      background: #f5f3ff;
+      color: #7c3aed;
+      border: 1px solid #ddd6fe;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+
+    .btn-action-pdf:hover {
+      background: #7c3aed;
+      color: white;
+    }
+
+    .btn-action-delete {
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+      cursor: pointer;
+    }
+
+    .btn-action-delete:hover {
+      background: #dc2626;
+      color: white;
+    }
+
+    .empty-state {
+      padding: 48px 24px;
+      text-align: center;
+      color: #6b7280;
+    }
+
+    .empty-state i {
+      font-size: 48px;
+      color: #d1d5db;
+      margin-bottom: 12px;
+    }
+
+    .empty-state h3 {
+      font-size: 16px;
+      color: #374151;
+      margin-bottom: 4px;
+    }
+  </style>
 </head>
 
 <body>
+
+  <!-- Navbar -->
   <div class="navbar">
-    <div class="logo"><img src="../static/Images/logo (2).png" alt="Logo"><a href="/">Resume Builder</a></div>
-    <ul>
-      <li><a href="#">Features</a></li>
-      <li><a href="#">Templates</a></li>
-      <li><a href="#">Pricing</a></li>
-    </ul>
-    <div class="buttons">
-      <a href="/signup" class="btn btn-signin">User Sign In</a>
-      <a href="/login" class="btn btn-primary">User Login</a>
+    <div class="logo">
+      <img src="/static/Images/logo (2).png" alt="Logo">
+      <a href="/admin">Resume Builder</a>
+      <span class="admin-badge">Admin Console</span>
+    </div>
+    <div class="nav-links">
+      <a href="/logout" class="btn-nav btn-logout">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </a>
     </div>
   </div>
 
-  <!-- Admin Dashboard Heading -->
-  <div class="head">
-    <h2 style="text-align: center; margin: 30px; margin-top: 80px;">Admin Dashboard</h2>
-  </div>
-  <h2>Registered Users</h2>
-  <!-- <form action="/admin" method="GET">
-    <p>{{users.name}}</p>
-  </form>
-  <table>
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Email</th>
-    </tr>
-    {% for user in users %}
-    <tr>
-      <td>{{ user.user_id}}</td>
-      <td>{{ user.name}}</td>
-      <td>{{ user.password}}</td>
-    </tr>
-    {% endfor %}
-  </table>
-  </form> -->
+  <div class="container">
 
- 
-<!-- <div class="cards">
-  {% if users %}
-    {% for u in users %}
-      <div class="card">
-        <div class="card-header">
-          <h2>{{ u['name'] }}</h2>
+    <!-- Header Banner -->
+    <div class="dashboard-header">
+      <h1><i class="fa-solid fa-shield-halved" style="color: #7c3aed;"></i> Admin Dashboard</h1>
+      <p>Manage all registered users, inspect resumes, and oversee platform activity.</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="margin-bottom: 24px;">
+          {% for category, message in messages %}
+            <div style="padding: 13px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px;
+              {% if category == 'danger' %}
+                background: #fef2f2; color: #991b1b; border: 1px solid #fecaca;
+              {% elif category == 'warning' %}
+                background: #fffbeb; color: #92400e; border: 1px solid #fde68a;
+              {% elif category == 'success' %}
+                background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0;
+              {% else %}
+                background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;
+              {% endif %}
+            ">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                {% if category == 'danger' %}
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                {% elif category == 'warning' %}
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                {% elif category == 'success' %}
+                  <i class="fa-solid fa-circle-check"></i>
+                {% else %}
+                  <i class="fa-solid fa-circle-info"></i>
+                {% endif %}
+                <span>{{ message }}</span>
+              </div>
+              <button onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 18px; line-height: 1; cursor: pointer; color: inherit; opacity: 0.7;">&times;</button>
+            </div>
+          {% endfor %}
         </div>
-        <div class="card-body">
-          <p><strong>Username:</strong> {{ u['username'] }}</p>
-          <p><strong>Password:</strong> {{ u['password'] }}</p>
-          <p><strong>Phone:</strong> {{ u['phone'] }}</p>
-          <p><strong>Email:</strong> {{ u['email'] }}</p>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon users">
+          <i class="fa-solid fa-users"></i>
         </div>
-        <div class="card-footer">
-          <a href="/resume/{{ u['id'] }}" class="btn-view">View Resume</a>
+        <div class="stat-info">
+          <h3>{{ stats.total_users }}</h3>
+          <span>Registered Users</span>
         </div>
       </div>
-    {% endfor %}
-  {% else %}
-    <p style="text-align: center;">No users found.</p>
-  {% endif %}
-</div> -->
 
+      <div class="stat-card">
+        <div class="stat-icon projects">
+          <i class="fa-solid fa-diagram-project"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ stats.total_projects }}</h3>
+          <span>Projects Logged</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon education">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ stats.total_education }}</h3>
+          <span>Education Records</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon experience">
+          <i class="fa-solid fa-briefcase"></i>
+        </div>
+        <div class="stat-info">
+          <h3>{{ stats.total_experience }}</h3>
+          <span>Experience Entries</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users Table Card -->
+    <div class="table-card">
+      <div class="table-toolbar">
+        <h2>Registered Users Directory ({{ users|length }})</h2>
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="searchInput" placeholder="Search by name, username, or email..." onkeyup="filterUsers()">
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table id="usersTable">
+          <thead>
+            <tr>
+              <th style="width: 60px;">ID</th>
+              <th>User</th>
+              <th>Contact Info</th>
+              <th>Resume Content</th>
+              <th style="text-align: right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if users %}
+              {% for u in users %}
+              <tr class="user-row">
+                <td>
+                  <strong style="color: #6d28d9; font-size: 13px;">#{{ u.user_id }}</strong>
+                </td>
+                <td>
+                  <div class="user-profile-cell">
+                    <div class="user-avatar">
+                      {{ u.name[:1]|upper if u.name else 'U' }}
+                    </div>
+                    <div class="user-name-box">
+                      <h4 class="user-fullname">{{ u.name }}</h4>
+                      <span class="user-uname">@{{ u.username }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div style="font-size: 13px; color: #1f2937;" class="user-email">
+                    <i class="fa-solid fa-envelope" style="color: #9ca3af; width: 16px;"></i> {{ u.email }}
+                  </div>
+                  {% if u.phone %}
+                  <div style="font-size: 12.5px; color: #6b7280; margin-top: 2px;">
+                    <i class="fa-solid fa-phone" style="color: #9ca3af; width: 16px;"></i> {{ u.phone }}
+                  </div>
+                  {% endif %}
+                  {% if u.city %}
+                  <div style="font-size: 12px; color: #9ca3af; margin-top: 2px;">
+                    <i class="fa-solid fa-location-dot" style="width: 16px;"></i> {{ u.city }}
+                  </div>
+                  {% endif %}
+                </td>
+                <td>
+                  <div>
+                    <span class="badge-count badge-edu" title="Education entries">
+                      <i class="fa-solid fa-graduation-cap"></i> {{ u.edu_count }} Edu
+                    </span>
+                    <span class="badge-count badge-proj" title="Projects logged">
+                      <i class="fa-solid fa-diagram-project"></i> {{ u.proj_count }} Proj
+                    </span>
+                    <span class="badge-count badge-exp" title="Experience records">
+                      <i class="fa-solid fa-briefcase"></i> {{ u.exp_count }} Exp
+                    </span>
+                    <span class="badge-count badge-skill" title="Skills added">
+                      <i class="fa-solid fa-code"></i> {{ u.skill_count }} Skills
+                    </span>
+                  </div>
+                </td>
+                <td style="text-align: right;">
+                  <div class="action-group" style="justify-content: flex-end;">
+                    <a href="/admin/resume/{{ u.user_id }}" class="btn-action-view" title="View Full Resume">
+                      <i class="fa-solid fa-eye"></i> View Resume
+                    </a>
+                    <a href="/dpw/{{ u.user_id }}" class="btn-action-pdf" title="Download PDF Resume">
+                      <i class="fa-solid fa-download"></i> PDF
+                    </a>
+                    <form method="POST" action="/admin/delete_user/{{ u.user_id }}" onsubmit="return confirm('Are you sure you want to permanently delete user {{ u.name }} (@{{ u.username }}) and all their resume entries? This cannot be undone.');" style="display: inline; margin: 0;">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button type="submit" class="btn-action-delete" title="Delete User">
+                        <i class="fa-solid fa-trash"></i> Delete
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="5">
+                  <div class="empty-state">
+                    <i class="fa-solid fa-user-slash"></i>
+                    <h3>No Users Found</h3>
+                    <p>No registered users exist in the database yet.</p>
+                  </div>
+                </td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function filterUsers() {
+      const input = document.getElementById('searchInput');
+      const filter = input.value.toLowerCase();
+      const rows = document.querySelectorAll('.user-row');
+
+      rows.forEach(row => {
+        const name = row.querySelector('.user-fullname')?.textContent.toLowerCase() || '';
+        const username = row.querySelector('.user-uname')?.textContent.toLowerCase() || '';
+        const email = row.querySelector('.user-email')?.textContent.toLowerCase() || '';
+
+        if (name.includes(filter) || username.includes(filter) || email.includes(filter)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+  </script>
 
 </body>
+
 </html>

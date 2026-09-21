@@ -1,0 +1,144 @@
+/* Classic Executive Resume Template (One-Column) */
+.page {
+    background: #ffffff;
+    margin: 0 auto;
+    padding: 24px 32px;
+    font-family: 'Times New Roman', Times, Georgia, serif;
+    color: #111827;
+    width: 860px;
+    box-sizing: border-box;
+    line-height: 1.45;
+    text-align: left;
+}
+
+/* Header */
+.resume-header {
+    text-align: center;
+    border-bottom: 2px solid #1f2937;
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+}
+
+.resume-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin: 0 0 6px 0;
+    color: #111827;
+    text-transform: uppercase;
+}
+
+.resume-header p, .header-contact {
+    font-size: 14px;
+    color: #374151;
+    margin: 3px 0;
+}
+
+.resume-header a {
+    color: #111827;
+    text-decoration: underline;
+}
+
+/* Layout Container (Single-Column) */
+.resume-body {
+    display: block;
+    width: 100%;
+}
+
+.resume-main-col {
+    display: block;
+    width: 100%;
+}
+
+.resume-sidebar-col {
+    display: block;
+    width: 100%;
+}
+
+/* Sections */
+.section {
+    margin-bottom: 14px;
+}
+
+.section h2 {
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #374151;
+    margin: 10px 0 6px 0;
+    padding-bottom: 2px;
+    color: #111827;
+}
+
+.section p {
+    font-size: 14px;
+    margin: 4px 0 6px 0;
+    color: #374151;
+}
+
+/* Items */
+.item {
+    margin-bottom: 10px;
+}
+
+.item h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+.item-subtitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.item-meta {
+    font-size: 13.5px;
+    color: #4b5563;
+    font-style: italic;
+    margin: 2px 0 4px 0;
+}
+
+.item p {
+    font-size: 14px;
+    margin: 3px 0;
+}
+
+.item ul, .section ul {
+    margin: 3px 0 6px 0;
+    padding-left: 20px;
+}
+
+.item li, .section li {
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 3px;
+}
+
+/* Skills, Certs, Coursework */
+.skill-row {
+    font-size: 14px;
+    margin-bottom: 4px;
+    color: #374151;
+}
+
+.skill-row strong {
+    color: #111827;
+}
+
+.skill-proficiency {
+    font-size: 13px;
+    color: #6b7280;
+    font-style: italic;
+}
+
+.project-url {
+    font-size: 13px;
+    color: #1d4ed8;
+    text-decoration: underline;
+    display: inline-block;
+    margin: 2px 0 4px 0;
+}

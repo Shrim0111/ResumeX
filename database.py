@@ -11,10 +11,19 @@ def init_db():
     c.execute('''
               CREATE TABLE IF NOT EXISTS admin (
                   admin_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                  username TEXT NOT NULL,
+                  username TEXT NOT NULL UNIQUE,
                   password TEXT NOT NULL
               )
     ''')
+
+    c.execute("SELECT COUNT(*) FROM admin")
+    if c.fetchone()[0] == 0:
+        import os
+        from werkzeug.security import generate_password_hash
+        admin_user = os.getenv("ADMIN_USERNAME", "admin")
+        admin_pass = os.getenv("ADMIN_PASSWORD", "admin123")
+        c.execute("INSERT INTO admin (username, password) VALUES (?, ?)", (admin_user, generate_password_hash(admin_pass)))
+
 
     c.execute('''
         CREATE TABLE IF NOT EXISTS users (
@@ -22,9 +31,14 @@ def init_db():
             name TEXT NOT NULL,
             email TEXT UNIQUE NOT NULL,
             username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+            template TEXT DEFAULT 'classic'
         )
     ''')
+    try:
+        c.execute("ALTER TABLE users ADD COLUMN template TEXT DEFAULT 'classic'")
+    except sqlite3.OperationalError:
+        pass
 
     c.execute('''
             CREATE TABLE IF NOT EXISTS contacts (

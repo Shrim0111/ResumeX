@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
-<link rel="stylesheet" href="../static/login.css">
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="../static/login.css">
 </head>
 <body>
   
@@ -17,13 +17,36 @@
       <li><a href="#">Pricing</a></li>
     </ul>
     <div class="buttons">
-      <a href="/signup" class="btn btn-signin">Sign In</a>
-      <a href="/signup" class="btn btn-primary">Get Started Free</a>
+      <a href="/signupf" class="btn btn-primary">Sign Up</a>
     </div>
   </div>
   <div class="form-container">
     <h2>Login</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="alert-container">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              {% if category == 'danger' %}
+                <i class="fa-solid fa-circle-exclamation"></i>
+              {% elif category == 'warning' %}
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              {% elif category == 'success' %}
+                <i class="fa-solid fa-circle-check"></i>
+              {% else %}
+                <i class="fa-solid fa-circle-info"></i>
+              {% endif %}
+              <span>{{ message }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     <form method="POST" action="/login">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="next" value="{{ next or request.args.get('next', '') }}">
       <input type="text" name="username" placeholder="Username" required>
       <input type="password" name="password" placeholder="Password" required>
       <button type="submit">Login</button>

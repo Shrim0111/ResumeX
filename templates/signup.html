@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sign up</title>
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="../static/login.css">
 </head>
 <body>
-    <body>
-
-
 
   <div class="navbar">
     <div class="logo"><img src="../static/Images/logo (2).png" alt="Logo"><a href="/">Resume Builder</a></div>
@@ -19,18 +17,41 @@
       <li><a href="#">Pricing</a></li>
     </ul>
     <div class="buttons">
-      <a href="/signup" class="btn btn-signin">Sign In</a>
+      <a href="/login" class="btn btn-signin">Sign In</a>
       <a href="/signup" class="btn btn-primary">Get Started Free</a>
     </div>
   </div>
 
   <div class="form-container">
     <h2>Sign Up</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="alert-container">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+              {% if category == 'danger' %}
+                <i class="fa-solid fa-circle-exclamation"></i>
+              {% elif category == 'warning' %}
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              {% elif category == 'success' %}
+                <i class="fa-solid fa-circle-check"></i>
+              {% else %}
+                <i class="fa-solid fa-circle-info"></i>
+              {% endif %}
+              <span>{{ message }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     <form method="POST" action="/signup">
-      <input type="text" name="name" placeholder="Enter you full name" required>
-      <input type="text" name="email" placeholder="Enter your email" required> 
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="text" name="name" placeholder="Enter your full name" required>
+      <input type="email" name="email" placeholder="Enter your email" required> 
       <input type="text" name="username" placeholder="Username" required>
-      <input type="password" name="password" placeholder="Password" required>
+      <input type="password" name="password" placeholder="Password (min 4 characters)" required>
       <button type="submit">Sign Up</button>
     </form>
     <a href="/loginf">Already have an account? Login</a>

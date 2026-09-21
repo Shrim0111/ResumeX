@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} - Resume Builder</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: #f3f4f6;
+      background-image: url(/static/Images/background.png);
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 40px;
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+    .navbar .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .navbar .logo img {
+      width: 35px;
+    }
+    .navbar .logo a {
+      text-decoration: none;
+      color: #1f2937;
+    }
+    .navbar .btn {
+      padding: 8px 18px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      background: linear-gradient(to right, #2563eb, #9333ea);
+      color: white;
+      transition: opacity 0.2s ease;
+    }
+    .navbar .btn:hover {
+      opacity: 0.9;
+    }
+    .edit-card {
+      background: white;
+      margin-top: 80px;
+      width: 100%;
+      max-width: 650px;
+      border-radius: 14px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      padding: 32px 36px;
+      border-top: 5px solid #7c3aed;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .card-header h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #1f2937;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .badge-id {
+      background: #ede9fe;
+      color: #6d28d9;
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    label {
+      display: block;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="url"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #111827;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: #fafafa;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+      background: white;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+    .btn-group {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 1px solid #f3f4f6;
+    }
+    .btn-save {
+      padding: 10px 22px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(to right, #2563eb, #9333ea);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.1s ease, box-shadow 0.2s ease;
+    }
+    .btn-save:hover {
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+      transform: translateY(-1px);
+    }
+    .btn-cancel {
+      padding: 10px 18px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #4b5563;
+      background: white;
+      text-decoration: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    .btn-cancel:hover {
+      background: #f9fafb;
+      color: #1f2937;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="logo">
+      <img src="/static/Images/logo (2).png" alt="Logo">
+      <a href="/">Resume Builder</a>
+    </div>
+    <div>
+      <a href="{{ cancel_url or '/previewForm' }}" class="btn"><i class="fa-solid fa-arrow-left"></i> Back to Resume</a>
+    </div>
+  </div>
+
+  <div class="edit-card">
+    <div class="card-header">
+      <h2><i class="fa-solid fa-pen-to-square" style="color: #7c3aed;"></i> {{ title }}</h2>
+      <span class="badge-id">ID #{{ entry_id }}</span>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="margin-bottom: 20px;">
+          {% for category, message in messages %}
+            <div style="padding: 11px 15px; border-radius: 8px; font-size: 13.5px; display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+              {% if category == 'danger' %}
+                background: #fef2f2; color: #991b1b; border: 1px solid #fecaca;
+              {% elif category == 'warning' %}
+                background: #fffbeb; color: #92400e; border: 1px solid #fde68a;
+              {% elif category == 'success' %}
+                background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0;
+              {% else %}
+                background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;
+              {% endif %}
+            ">
+              {% if category == 'danger' %}
+                <i class="fa-solid fa-circle-exclamation"></i>
+              {% elif category == 'warning' %}
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              {% elif category == 'success' %}
+                <i class="fa-solid fa-circle-check"></i>
+              {% else %}
+                <i class="fa-solid fa-circle-info"></i>
+              {% endif %}
+              <span>{{ message }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      {% if section == 'education' %}
+        <div class="form-group">
+          <label>Institution / University *</label>
+          <input type="text" name="institution" value="{{ entry['institution'] or '' }}" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Degree *</label>
+            <input type="text" name="degree" value="{{ entry['degree'] or '' }}" required>
+          </div>
+          <div class="form-group">
+            <label>Field of Study</label>
+            <input type="text" name="fieldOfStudy" value="{{ entry['fieldOfStudy'] or '' }}">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Start Date</label>
+            <input type="text" name="startDate" value="{{ entry['startDate'] or '' }}" placeholder="YYYY-MM or Year">
+          </div>
+          <div class="form-group">
+            <label>End Date</label>
+            <input type="text" name="endDate" value="{{ entry['endDate'] or '' }}" placeholder="YYYY-MM or Present">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>GPA / Percentage</label>
+          <input type="text" name="gpa" value="{{ entry['gpa'] or '' }}" placeholder="e.g. 3.8 or 85%">
+        </div>
+        <div class="form-group">
+          <label>Description / Honors</label>
+          <textarea name="description" placeholder="Relevant coursework, achievements...">{{ entry['description'] or '' }}</textarea>
+        </div>
+
+      {% elif section == 'experience' %}
+        <div class="form-row">
+          <div class="form-group">
+            <label>Job Title *</label>
+            <input type="text" name="jobTitle" value="{{ entry['jobTitle'] or '' }}" required>
+          </div>
+          <div class="form-group">
+            <label>Company *</label>
+            <input type="text" name="company" value="{{ entry['company'] or '' }}" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Location</label>
+            <input type="text" name="location" value="{{ entry['location'] or '' }}">
+          </div>
+          <div class="form-group">
+            <label>Employment Type</label>
+            <input type="text" name="employmentType" value="{{ entry['employmentType'] or '' }}" placeholder="Full-time, Internship, etc.">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Start Date</label>
+            <input type="text" name="startDate" value="{{ entry['startDate'] or '' }}" placeholder="YYYY-MM">
+          </div>
+          <div class="form-group">
+            <label>End Date</label>
+            <input type="text" name="endDate" value="{{ entry['endDate'] or '' }}" placeholder="YYYY-MM or Present">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description / Responsibilities</label>
+          <textarea name="description">{{ entry['description'] or '' }}</textarea>
+        </div>
+
+      {% elif section == 'project' %}
+        <div class="form-row">
+          <div class="form-group">
+            <label>Project Name *</label>
+            <input type="text" name="projectName" value="{{ entry['projectName'] or '' }}" required>
+          </div>
+          <div class="form-group">
+            <label>Role</label>
+            <input type="text" name="role" value="{{ entry['role'] or '' }}" placeholder="e.g. Lead Developer">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Start Date</label>
+            <input type="text" name="startDate" value="{{ entry['startDate'] or '' }}">
+          </div>
+          <div class="form-group">
+            <label>End Date</label>
+            <input type="text" name="endDate" value="{{ entry['endDate'] or '' }}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Skills / Technologies Used</label>
+          <input type="text" name="skills" value="{{ entry['skills'] or '' }}" placeholder="e.g. Python, Flask, SQLite">
+        </div>
+        <div class="form-group">
+          <label>Project URL</label>
+          <input type="text" name="url" value="{{ entry['url'] or '' }}" placeholder="https://github.com/...">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea name="description">{{ entry['description'] or '' }}</textarea>
+        </div>
+
+      {% elif section == 'skill' %}
+        <div class="form-group">
+          <label>Category *</label>
+          <input type="text" name="category" value="{{ entry['category'] or '' }}" placeholder="e.g. Programming Languages, Tools" required>
+        </div>
+        <div class="form-group">
+          <label>Skills List *</label>
+          <input type="text" name="skills" value="{{ entry['skills'] or '' }}" placeholder="e.g. Python, JavaScript, SQL" required>
+        </div>
+        <div class="form-group">
+          <label>Proficiency (Optional)</label>
+          <input type="text" name="proficiency" value="{{ entry['proficiency'] or '' }}" placeholder="e.g. Advanced, Intermediate">
+        </div>
+
+      {% elif section == 'certification' %}
+        <div class="form-group">
+          <label>Certification Name *</label>
+          <input type="text" name="certification_name" value="{{ entry['certification_name'] or '' }}" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Issuing Organization *</label>
+            <input type="text" name="issuing_org" value="{{ entry['issuing_org'] or '' }}" required>
+          </div>
+          <div class="form-group">
+            <label>Date Obtained</label>
+            <input type="text" name="date_obtained" value="{{ entry['date_obtained'] or '' }}">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Expiry Date</label>
+            <input type="text" name="expiry_date" value="{{ entry['expiry_date'] or '' }}">
+          </div>
+          <div class="form-group">
+            <label>Credential ID</label>
+            <input type="text" name="credential_id" value="{{ entry['credential_id'] or '' }}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Credential URL</label>
+          <input type="text" name="url" value="{{ entry['url'] or '' }}">
+        </div>
+
+      {% elif section == 'innovation' %}
+        <div class="form-group">
+          <label>Activity / Innovation Title *</label>
+          <input type="text" name="title" value="{{ entry['title'] or '' }}" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="text" name="date" value="{{ entry['date'] or '' }}">
+          </div>
+          <div class="form-group">
+            <label>Associated With / Club / Event</label>
+            <input type="text" name="associated_with" value="{{ entry['associated_with'] or '' }}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>URL (Optional)</label>
+          <input type="text" name="url" value="{{ entry['url'] or '' }}">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea name="description">{{ entry['description'] or '' }}</textarea>
+        </div>
+
+      {% elif section == 'coursework' %}
+        <div class="form-row">
+          <div class="form-group">
+            <label>Course Name *</label>
+            <input type="text" name="course_name" value="{{ entry['course_name'] or '' }}" required>
+          </div>
+          <div class="form-group">
+            <label>Course Code</label>
+            <input type="text" name="course_code" value="{{ entry['course_code'] or '' }}">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Institution *</label>
+            <input type="text" name="institution" value="{{ entry['institution'] or '' }}" required>
+          </div>
+          <div class="form-group">
+            <label>Department</label>
+            <input type="text" name="department" value="{{ entry['department'] or '' }}">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Completion Date</label>
+            <input type="text" name="completion_date" value="{{ entry['completion_date'] or '' }}">
+          </div>
+          <div class="form-group">
+            <label>Grade</label>
+            <input type="text" name="grade" value="{{ entry['grade'] or '' }}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Skills Covered</label>
+          <input type="text" name="skills" value="{{ entry['skills'] or '' }}">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea name="description">{{ entry['description'] or '' }}</textarea>
+        </div>
+
+      {% elif section == 'summary' %}
+        <div class="form-group">
+          <label>Professional Summary *</label>
+          <textarea name="summary_text" rows="5" required>{{ entry['summary_text'] or '' }}</textarea>
+        </div>
+
+      {% elif section == 'contact' %}
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" name="fullname" value="{{ entry['fullname'] or '' }}" required>
+          </div>
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" name="email" value="{{ entry['email'] or '' }}" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Phone *</label>
+            <input type="tel" name="phone" value="{{ entry['phone'] or '' }}" required>
+          </div>
+          <div class="form-group">
+            <label>Portfolio / Website</label>
+            <input type="text" name="p_web" value="{{ entry['p_web'] or '' }}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>LinkedIn / GitHub Profile</label>
+          <input type="text" name="l_web" value="{{ entry['l_web'] or '' }}">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City</label>
+            <input type="text" name="City" value="{{ entry['City'] or '' }}">
+          </div>
+          <div class="form-group">
+            <label>State</label>
+            <input type="text" name="State" value="{{ entry['State'] or '' }}">
+          </div>
+          <div class="form-group">
+            <label>Country</label>
+            <input type="text" name="Country" value="{{ entry['Country'] or '' }}">
+          </div>
+        </div>
+
+      {% endif %}
+
+      <div class="btn-group">
+        <a href="{{ cancel_url or '/previewForm' }}" class="btn-cancel">
+          <i class="fa-solid fa-xmark"></i> Cancel
+        </a>
+        <button type="submit" class="btn-save">
+          <i class="fa-solid fa-check"></i> Save Changes
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</body>
+</html>

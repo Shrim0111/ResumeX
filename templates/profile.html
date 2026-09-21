@@ -1,111 +1,749 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>{{ user['full_name'] }} - Profile</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ contacts['fullname'] if contacts else (user['name'] if user else 'User') }} - Profile - Resume Builder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="/static/profile.css">
 </head>
 
 <body>
 
+    <!-- Top Navbar with User Profile Icon & Dropdown -->
     <div class="navbar">
-        <div class="logo"><img src="../static/Images/logo (2).png" alt="Logo"><a href="/">Resume Builder</a></div>
+        <div class="logo">
+            <img src="../static/Images/logo (2).png" alt="Logo">
+            <a href="/">Resume Builder</a>
+        </div>
         <ul>
-            <li><a href="#">Features</a></li>
-            <li><a href="#">Templates</a></li>
-            <li><a href="#">Pricing</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/tempage">Templates</a></li>
+            <li><a href="/homepage">Resume Studio</a></li>
+            <li><a href="/previewForm">Preview Resume</a></li>
+            <li><a href="/profile" class="active">Profile</a></li>
         </ul>
-        <div class="buttons">
-            <a href="/homepage" class="btn btn-primary">Home</a>
+        <div class="nav-right-cluster">
+            <a href="/previewForm" class="btn btn-primary">
+                <i class="fa-solid fa-eye"></i> Preview Resume
+            </a>
+            
+            <!-- User Profile Avatar Pill & Dropdown -->
+            <div class="user-menu-pill" title="Account Menu">
+                <div class="user-pill-btn">
+                    <div class="user-avatar-badge">
+                        {{ current_user.initials if current_user else 'U' }}
+                    </div>
+                    <div class="user-pill-info">
+                        <span class="user-pill-name">{{ current_user.name if current_user else (user['name'] if user else 'Candidate') }}</span>
+                        <span class="user-pill-tag">Online</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-down user-pill-caret"></i>
+                </div>
+
+                <ul class="dropdown">
+                    <li class="dropdown-header-user">
+                        <div class="dd-name">{{ current_user.name if current_user else (user['name'] if user else 'Candidate') }}</div>
+                        <div class="dd-email">{{ current_user.email if current_user else (user['email'] if user else '') }}</div>
+                    </li>
+                    <li><a href="/profile" style="color: #2563eb; font-weight: 600;"><i class="fa-solid fa-user"></i> View Profile</a></li>
+                    <li><a href="/homepage"><i class="fa-solid fa-sliders"></i> Resume Studio</a></li>
+                    <li><a href="/previewForm"><i class="fa-solid fa-eye"></i> Preview Resume</a></li>
+                    <li><a href="/tempage"><i class="fa-solid fa-palette"></i> Template Gallery</a></li>
+                    <li><a href="/logout" class="dd-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="max-width: 1340px; margin: 15px auto 0 auto; padding: 0 24px;">
+          {% for category, message in messages %}
+            <div style="padding: 12px 18px; border-radius: 8px; font-size: 14px; font-weight: 500; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px;
+              {% if category == 'danger' %}
+                background: #fef2f2; color: #991b1b; border: 1px solid #fecaca;
+              {% elif category == 'warning' %}
+                background: #fffbeb; color: #92400e; border: 1px solid #fde68a;
+              {% elif category == 'success' %}
+                background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0;
+              {% else %}
+                background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;
+              {% endif %}
+            ">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>{{ message }}</span>
+              </div>
+              <button onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: inherit; opacity: 0.6;">&times;</button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
 
+    <!-- Main Profile Container -->
+    <div class="profile-page-container">
+        <div class="profile-main-grid">
+            
+            <!-- Left Profile Card -->
+            <div class="profile-card-left">
+                <div class="profile-avatar-wrapper">
+                    <div class="profile-avatar-large">
+                        {{ current_user.initials if current_user else (user['name'][:2].upper() if user and user['name'] else 'U') }}
+                    </div>
+                    <div class="profile-avatar-badge-status" title="Status: Online"></div>
+                </div>
 
-    <div class="profile">
-        <div class="left_profile">
-            <div class="prephoto">
-                <div class="photo"><img src="../static/Images/profile photo.png">
+                <h2 class="profile-user-name">{{ contacts['fullname'] if contacts and contacts['fullname'] else (user['name'] if user else 'Candidate') }}</h2>
+                <span class="profile-user-username">@{{ user['username'] if user else 'user' }}</span>
 
+                <!-- Contact & Location Info -->
+                <div class="profile-details-list">
+                    <div class="detail-item">
+                        <i class="fa-solid fa-envelope"></i>
+                        <div class="detail-item-content">
+                            <strong>Email</strong>
+                            <span>{{ user['email'] if user else (contacts['email'] if contacts else 'Not added') }}</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <i class="fa-solid fa-phone"></i>
+                        <div class="detail-item-content">
+                            <strong>Phone</strong>
+                            <span>{{ contacts['phone'] if (contacts and contacts['phone']) else 'Not added' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <div class="detail-item-content">
+                            <strong>Location</strong>
+                            <span>
+                                {% if contacts and (contacts['City'] or contacts['State'] or contacts['Country']) %}
+                                    {{ contacts['City'] }}{% if contacts['State'] %}, {{ contacts['State'] }}{% endif %}{% if contacts['Country'] %}, {{ contacts['Country'] }}{% endif %}
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    {% if contacts and contacts['p_web'] %}
+                    <div class="detail-item">
+                        <i class="fa-solid fa-globe"></i>
+                        <div class="detail-item-content">
+                            <strong>Personal Website</strong>
+                            <a href="{{ contacts['p_web'] }}" target="_blank" rel="noopener noreferrer">{{ contacts['p_web'] }}</a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if contacts and contacts['l_web'] %}
+                    <div class="detail-item">
+                        <i class="fa-brands fa-linkedin"></i>
+                        <div class="detail-item-content">
+                            <strong>LinkedIn Profile</strong>
+                            <a href="{{ contacts['l_web'] }}" target="_blank" rel="noopener noreferrer">{{ contacts['l_web'] }}</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Quick Content Stats -->
+                <div class="profile-stats-grid">
+                    <div class="stat-pill">
+                        <span>Education</span>
+                        <strong>{{ stats.education if stats else (education|length) }}</strong>
+                    </div>
+                    <div class="stat-pill">
+                        <span>Experience</span>
+                        <strong>{{ stats.experience if stats else (experience|length) }}</strong>
+                    </div>
+                    <div class="stat-pill">
+                        <span>Projects</span>
+                        <strong>{{ stats.projects if stats else (projects|length) }}</strong>
+                    </div>
+                    <div class="stat-pill">
+                        <span>Skills</span>
+                        <strong>{{ stats.skills if stats else (skills|length) }}</strong>
+                    </div>
+                    <div class="stat-pill">
+                        <span>Certifications</span>
+                        <strong>{{ stats.certifications if stats else (certifications|length) }}</strong>
+                    </div>
+                    <div class="stat-pill">
+                        <span>Coursework</span>
+                        <strong>{{ stats.coursework if stats else (coursework|length) }}</strong>
+                    </div>
+                </div>
+
+                <!-- Actions Stack -->
+                <div class="profile-actions-stack">
+                    {% if contacts and contacts['id'] %}
+                    <a href="/edit_contact/{{ contacts['id'] }}" class="btn-card-action">
+                        <i class="fa-solid fa-pen-to-square" style="color: #2563eb;"></i> Edit Contact Info
+                    </a>
+                    {% else %}
+                    <a href="/homepage" class="btn-card-action">
+                        <i class="fa-solid fa-plus" style="color: #2563eb;"></i> Add Contact Info
+                    </a>
+                    {% endif %}
+                    
+                    <a href="/homepage" class="btn-card-action btn-card-primary">
+                        <i class="fa-solid fa-sliders"></i> Open Resume Studio
+                    </a>
+                    <a href="/previewForm" class="btn-card-action">
+                        <i class="fa-solid fa-eye" style="color: #059669;"></i> Preview Live Resume
+                    </a>
+                    <a href="/tempage" class="btn-card-action">
+                        <i class="fa-solid fa-palette" style="color: #9333ea;"></i> Switch Template
+                    </a>
+                    <a href="/logout" class="btn-card-action btn-card-danger">
+                        <i class="fa-solid fa-right-from-bracket"></i> Log Out
+                    </a>
                 </div>
             </div>
-            <h2>{{ contacts['fullname'] }}</h2>
-            <p><strong>Email:</strong> {{ user['email'] }}</p>
-            <p><strong>Phone:</strong> {{ contacts['phone'] }}</p>
-            <p><strong>City:</strong> {{ contacts['city'] }}</p>
-        </div>
 
-
-        <div class="container">
-
-            <div class="profile-wrapper">
-
-                <!-- <div class="content"> -->
-                <div class="tabs">
-                    <button class="active" onclick="showTab(event, 'overview')">Overview</button>
-                    <button onclick="showTab(event, 'Education')">Education</button>
-                    <button onclick="showTab(event, 'Experience')">Experience</button>
-                    <button onclick="showTab(event, 'Projects')">Projects</button>
+            <!-- Right Content Tabs -->
+            <div class="profile-content-right">
+                
+                <!-- 8 Tabs Bar -->
+                <div class="tabs-scroll-container">
+                    <div class="profile-tabs">
+                        <button class="active" onclick="showTab(event, 'tab-overview')">
+                            <i class="fa-solid fa-circle-user"></i> Overview
+                        </button>
+                        <button onclick="showTab(event, 'tab-education')">
+                            <i class="fa-solid fa-graduation-cap"></i> Education
+                            <span class="tab-badge">{{ stats.education if stats else (education|length) }}</span>
+                        </button>
+                        <button onclick="showTab(event, 'tab-experience')">
+                            <i class="fa-solid fa-briefcase"></i> Experience
+                            <span class="tab-badge">{{ stats.experience if stats else (experience|length) }}</span>
+                        </button>
+                        <button onclick="showTab(event, 'tab-projects')">
+                            <i class="fa-solid fa-diagram-project"></i> Projects
+                            <span class="tab-badge">{{ stats.projects if stats else (projects|length) }}</span>
+                        </button>
+                        <button onclick="showTab(event, 'tab-skills')">
+                            <i class="fa-solid fa-code"></i> Skills
+                            <span class="tab-badge">{{ stats.skills if stats else (skills|length) }}</span>
+                        </button>
+                        <button onclick="showTab(event, 'tab-certifications')">
+                            <i class="fa-solid fa-certificate"></i> Certifications
+                            <span class="tab-badge">{{ stats.certifications if stats else (certifications|length) }}</span>
+                        </button>
+                        <button onclick="showTab(event, 'tab-innovations')">
+                            <i class="fa-solid fa-lightbulb"></i> Innovations & Extra
+                            <span class="tab-badge">{{ stats.innovations if stats else (innovations|length) }}</span>
+                        </button>
+                        <button onclick="showTab(event, 'tab-coursework')">
+                            <i class="fa-solid fa-book-open"></i> Coursework
+                            <span class="tab-badge">{{ stats.coursework if stats else (coursework|length) }}</span>
+                        </button>
+                    </div>
                 </div>
 
-                <div id="overview" class="tab-content active">
-                    <h3>About</h3>
-                    <p>{{summary.summary_text}}
-                    </p>
-                    <section>
-                        <p><b>Email:</b> {{ user['email'] }}</p>
-                        <p><b>Phone:</b> {{ contacts['phone'] }}</p>
-                        <p><b>Country:</b> {{ contacts['Country'] }}</p>
-                        <p><b>Summary:</b> {{ summary['summary_text'] }}</p>
-                    </section>
+                <!-- 1. OVERVIEW TAB -->
+                <div id="tab-overview" class="tab-content active">
+                    <div class="tab-header-row">
+                        <h3><i class="fa-solid fa-address-card" style="color: #2563eb;"></i> Resume Profile Summary</h3>
+                        <a href="/homepage" class="btn-add-section"><i class="fa-solid fa-sliders"></i> Edit in Studio</a>
+                    </div>
+
+                    <!-- Professional Summary -->
+                    <div class="overview-summary-card">
+                        <div class="overview-summary-header">
+                            <h4 style="font-size: 15px; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-quote-left" style="color: #9333ea;"></i> Professional Summary
+                            </h4>
+                            {% if summary and summary['summary_id'] %}
+                            <a href="/edit_summary/{{ summary['summary_id'] }}" class="btn-entry-edit">
+                                <i class="fa-solid fa-pen-to-square"></i> Edit Summary
+                            </a>
+                            {% else %}
+                            <a href="/homepage" class="btn-entry-edit">
+                                <i class="fa-solid fa-plus"></i> Add Summary
+                            </a>
+                            {% endif %}
+                        </div>
+                        <p class="overview-summary-text">
+                            {{ summary.summary_text if (summary and summary.summary_text) else 'No professional summary provided yet. Add a compelling elevator pitch in the Resume Studio to attract recruiters.' }}
+                        </p>
+                    </div>
+
+                    <!-- Contact & Location Grid -->
+                    <div class="overview-grid-2col">
+                        <div class="overview-card-panel">
+                            <h4><i class="fa-solid fa-id-badge" style="color: #2563eb;"></i> Primary Contact Details</h4>
+                            <table class="overview-info-table">
+                                <tr>
+                                    <td>Full Name</td>
+                                    <td><strong>{{ contacts['fullname'] if contacts and contacts['fullname'] else (user['name'] if user else 'Not provided') }}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td>{{ user['email'] if user else (contacts['email'] if contacts else 'Not provided') }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Phone</td>
+                                    <td>{{ contacts['phone'] if (contacts and contacts['phone']) else 'Not provided' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Country</td>
+                                    <td>{{ contacts['Country'] if (contacts and contacts['Country']) else 'Not provided' }}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="overview-card-panel">
+                            <h4><i class="fa-solid fa-link" style="color: #9333ea;"></i> Online Presence & Location</h4>
+                            <table class="overview-info-table">
+                                <tr>
+                                    <td>City / State</td>
+                                    <td>
+                                        {% if contacts and (contacts['City'] or contacts['State']) %}
+                                            {{ contacts['City'] }}{% if contacts['State'] %}, {{ contacts['State'] }}{% endif %}
+                                        {% else %}
+                                            Not provided
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Website</td>
+                                    <td>
+                                        {% if contacts and contacts['p_web'] %}
+                                        <a href="{{ contacts['p_web'] }}" target="_blank" style="color: #2563eb;">{{ contacts['p_web'] }}</a>
+                                        {% else %}
+                                        Not provided
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>LinkedIn</td>
+                                    <td>
+                                        {% if contacts and contacts['l_web'] %}
+                                        <a href="{{ contacts['l_web'] }}" target="_blank" style="color: #2563eb;">{{ contacts['l_web'] }}</a>
+                                        {% else %}
+                                        Not provided
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Total Entries</td>
+                                    <td><span class="meta-pill meta-pill-primary">{{ stats.total if stats else '0' }} records saved</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="Education" class="tab-content">
-                    <h3>Education</h3>
-                    <ul>
+                <!-- 2. EDUCATION TAB -->
+                <div id="tab-education" class="tab-content">
+                    <div class="tab-header-row">
+                        <h3><i class="fa-solid fa-graduation-cap" style="color: #2563eb;"></i> Education History</h3>
+                        <a href="/homepage" class="btn-add-section"><i class="fa-solid fa-plus"></i> Add Education</a>
+                    </div>
+
+                    {% if education and education|length > 0 %}
+                    <div class="items-list">
                         {% for edu in education %}
-                        <li>{{ edu['degree'] }} in {{ edu['fieldOfStudy'] }} at {{ edu['institution'] }} ({{
-                            edu['startDate'] }} - {{ edu['endDate'] }})</li>
+                        <div class="item-card">
+                            <div class="item-main-row">
+                                <div class="item-title-group">
+                                    <h4>{{ edu['degree'] }}{% if edu['fieldOfStudy'] %} in {{ edu['fieldOfStudy'] }}{% endif %}</h4>
+                                    <div class="item-subtitle">{{ edu['institution'] }}</div>
+                                    <div class="item-meta-bar">
+                                        <span class="meta-pill"><i class="fa-regular fa-calendar"></i> {{ edu['startDate'] }} - {{ edu['endDate'] }}</span>
+                                        {% if edu['gpa'] %}
+                                        <span class="meta-pill meta-pill-success"><i class="fa-solid fa-award"></i> GPA: {{ edu['gpa'] }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="item-actions-group">
+                                    <a href="/edit_education/{{ edu['education_id'] }}" class="btn-entry-edit">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </a>
+                                    <form method="POST" action="/delete_education/{{ edu['education_id'] }}" onsubmit="return confirm('Are you sure you want to delete this education entry?');" style="margin: 0;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn-entry-delete">
+                                            <i class="fa-solid fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% if edu['description'] %}
+                            <div class="item-description-text">{{ edu['description'] }}</div>
+                            {% endif %}
+                        </div>
                         {% endfor %}
-                    </ul>
-
+                    </div>
+                    {% else %}
+                    <div class="empty-section-box">
+                        <i class="fa-solid fa-graduation-cap empty-section-icon"></i>
+                        <h4>No Education Entries Added</h4>
+                        <p>Highlight your academic background, degree, university, and GPA.</p>
+                        <a href="/homepage" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Education</a>
+                    </div>
+                    {% endif %}
                 </div>
 
-                <div id="Experience" class="tab-content">
-                    <h3>Experience</h3>
-                    <ul>
+                <!-- 3. EXPERIENCE TAB -->
+                <div id="tab-experience" class="tab-content">
+                    <div class="tab-header-row">
+                        <h3><i class="fa-solid fa-briefcase" style="color: #2563eb;"></i> Work Experience</h3>
+                        <a href="/homepage" class="btn-add-section"><i class="fa-solid fa-plus"></i> Add Experience</a>
+                    </div>
+
+                    {% if experience and experience|length > 0 %}
+                    <div class="items-list">
                         {% for exp in experience %}
-                        <li>{{ exp['jobTitle'] }} at {{ exp['company'] }} ({{ exp['startDate'] }} - {{ exp['endDate']
-                            }})</li>
+                        <div class="item-card">
+                            <div class="item-main-row">
+                                <div class="item-title-group">
+                                    <h4>{{ exp['jobTitle'] }}</h4>
+                                    <div class="item-subtitle">{{ exp['company'] }}</div>
+                                    <div class="item-meta-bar">
+                                        <span class="meta-pill"><i class="fa-regular fa-calendar"></i> {{ exp['startDate'] }} - {{ exp['endDate'] if exp['endDate'] else 'Present' }}</span>
+                                        {% if exp['employmentType'] %}
+                                        <span class="meta-pill meta-pill-primary">{{ exp['employmentType'] }}</span>
+                                        {% endif %}
+                                        {% if exp['location'] %}
+                                        <span class="meta-pill"><i class="fa-solid fa-location-dot"></i> {{ exp['location'] }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="item-actions-group">
+                                    <a href="/edit_experience/{{ exp['experience_id'] }}" class="btn-entry-edit">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </a>
+                                    <form method="POST" action="/delete_experience/{{ exp['experience_id'] }}" onsubmit="return confirm('Are you sure you want to delete this experience entry?');" style="margin: 0;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn-entry-delete">
+                                            <i class="fa-solid fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% if exp['description'] %}
+                            <div class="item-description-text">{{ exp['description'] }}</div>
+                            {% endif %}
+                        </div>
                         {% endfor %}
-                    </ul>
-
+                    </div>
+                    {% else %}
+                    <div class="empty-section-box">
+                        <i class="fa-solid fa-briefcase empty-section-icon"></i>
+                        <h4>No Work Experience Added</h4>
+                        <p>Document your professional roles, internships, achievements, and responsibilities.</p>
+                        <a href="/homepage" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Experience</a>
+                    </div>
+                    {% endif %}
                 </div>
 
-                <div id="Projects" class="tab-content">
-                    <h3>Projects</h3>
-                    <ul>
+                <!-- 4. PROJECTS TAB -->
+                <div id="tab-projects" class="tab-content">
+                    <div class="tab-header-row">
+                        <h3><i class="fa-solid fa-diagram-project" style="color: #2563eb;"></i> Projects Portfolio</h3>
+                        <a href="/homepage" class="btn-add-section"><i class="fa-solid fa-plus"></i> Add Project</a>
+                    </div>
+
+                    {% if projects and projects|length > 0 %}
+                    <div class="items-list">
                         {% for proj in projects %}
-                        <li>{{ proj['projectName'] }} (Role: {{ proj['role'] }})</li>
+                        <div class="item-card">
+                            <div class="item-main-row">
+                                <div class="item-title-group">
+                                    <h4>{{ proj['projectName'] }}</h4>
+                                    {% if proj['role'] %}
+                                    <div class="item-subtitle">{{ proj['role'] }}</div>
+                                    {% endif %}
+                                    <div class="item-meta-bar">
+                                        <span class="meta-pill"><i class="fa-regular fa-calendar"></i> {{ proj['startDate'] }} - {{ proj['endDate'] if proj['endDate'] else 'Present' }}</span>
+                                        {% if proj['url'] %}
+                                        <a href="{{ proj['url'] }}" target="_blank" class="meta-pill meta-pill-primary" style="text-decoration: none;">
+                                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Project Link
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="item-actions-group">
+                                    <a href="/edit_project/{{ proj['project_id'] }}" class="btn-entry-edit">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </a>
+                                    <form method="POST" action="/delete_project/{{ proj['project_id'] }}" onsubmit="return confirm('Are you sure you want to delete this project?');" style="margin: 0;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn-entry-delete">
+                                            <i class="fa-solid fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% if proj['skills'] %}
+                            <div class="item-tags-container">
+                                {% for tag in proj['skills'].split(',') %}
+                                {% if tag.strip() %}
+                                <span class="skill-tag">{{ tag.strip() }}</span>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            {% if proj['description'] %}
+                            <div class="item-description-text">{{ proj['description'] }}</div>
+                            {% endif %}
+                        </div>
                         {% endfor %}
-                    </ul>
+                    </div>
+                    {% else %}
+                    <div class="empty-section-box">
+                        <i class="fa-solid fa-diagram-project empty-section-icon"></i>
+                        <h4>No Projects Added</h4>
+                        <p>Showcase hands-on applications, GitHub repositories, and full-stack solutions.</p>
+                        <a href="/homepage" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Project</a>
+                    </div>
+                    {% endif %}
                 </div>
+
+                <!-- 5. SKILLS TAB -->
+                <div id="tab-skills" class="tab-content">
+                    <div class="tab-header-row">
+                        <h3><i class="fa-solid fa-code" style="color: #2563eb;"></i> Technical & Soft Skills</h3>
+                        <a href="/homepage" class="btn-add-section"><i class="fa-solid fa-plus"></i> Add Skills</a>
+                    </div>
+
+                    {% if skills and skills|length > 0 %}
+                    <div class="items-list">
+                        {% for sk in skills %}
+                        <div class="item-card">
+                            <div class="item-main-row">
+                                <div class="item-title-group">
+                                    <h4>{{ sk['category'] }}</h4>
+                                    {% if sk['proficiency'] %}
+                                    <div class="item-meta-bar">
+                                        <span class="meta-pill meta-pill-success"><i class="fa-solid fa-chart-line"></i> {{ sk['proficiency'] }}</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="item-actions-group">
+                                    <a href="/edit_skill/{{ sk['skill_id'] }}" class="btn-entry-edit">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </a>
+                                    <form method="POST" action="/delete_skill/{{ sk['skill_id'] }}" onsubmit="return confirm('Are you sure you want to delete this skills group?');" style="margin: 0;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn-entry-delete">
+                                            <i class="fa-solid fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="item-tags-container">
+                                {% for tag in sk['skills'].split(',') %}
+                                {% if tag.strip() %}
+                                <span class="skill-tag">{{ tag.strip() }}</span>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-section-box">
+                        <i class="fa-solid fa-code empty-section-icon"></i>
+                        <h4>No Skills Added</h4>
+                        <p>Organize your technical proficiencies, frameworks, tools, and competencies.</p>
+                        <a href="/homepage" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Skills</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- 6. CERTIFICATIONS TAB -->
+                <div id="tab-certifications" class="tab-content">
+                    <div class="tab-header-row">
+                        <h3><i class="fa-solid fa-certificate" style="color: #2563eb;"></i> Certifications & Credentials</h3>
+                        <a href="/homepage" class="btn-add-section"><i class="fa-solid fa-plus"></i> Add Certification</a>
+                    </div>
+
+                    {% if certifications and certifications|length > 0 %}
+                    <div class="items-list">
+                        {% for cert in certifications %}
+                        <div class="item-card">
+                            <div class="item-main-row">
+                                <div class="item-title-group">
+                                    <h4>{{ cert['certification_name'] }}</h4>
+                                    <div class="item-subtitle">{{ cert['issuing_org'] }}</div>
+                                    <div class="item-meta-bar">
+                                        <span class="meta-pill"><i class="fa-regular fa-calendar"></i> Issued: {{ cert['date_obtained'] }}{% if cert['expiry_date'] %} • Expires: {{ cert['expiry_date'] }}{% endif %}</span>
+                                        {% if cert['credential_id'] %}
+                                        <span class="meta-pill"><i class="fa-solid fa-fingerprint"></i> ID: {{ cert['credential_id'] }}</span>
+                                        {% endif %}
+                                        {% if cert['url'] %}
+                                        <a href="{{ cert['url'] }}" target="_blank" class="meta-pill meta-pill-primary" style="text-decoration: none;">
+                                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Verify Credential
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="item-actions-group">
+                                    <a href="/edit_certification/{{ cert['certification_id'] }}" class="btn-entry-edit">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </a>
+                                    <form method="POST" action="/delete_certification/{{ cert['certification_id'] }}" onsubmit="return confirm('Are you sure you want to delete this certification?');" style="margin: 0;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn-entry-delete">
+                                            <i class="fa-solid fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-section-box">
+                        <i class="fa-solid fa-certificate empty-section-icon"></i>
+                        <h4>No Certifications Added</h4>
+                        <p>Add industry certifications from AWS, Google Cloud, Cisco, Microsoft, or Coursera.</p>
+                        <a href="/homepage" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Certification</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- 7. INNOVATIONS & EXTRA TAB -->
+                <div id="tab-innovations" class="tab-content">
+                    <div class="tab-header-row">
+                        <h3><i class="fa-solid fa-lightbulb" style="color: #2563eb;"></i> Innovations & Involvements</h3>
+                        <a href="/homepage" class="btn-add-section"><i class="fa-solid fa-plus"></i> Add Innovation</a>
+                    </div>
+
+                    {% if innovations and innovations|length > 0 %}
+                    <div class="items-list">
+                        {% for inn in innovations %}
+                        <div class="item-card">
+                            <div class="item-main-row">
+                                <div class="item-title-group">
+                                    <h4>{{ inn['title'] }}</h4>
+                                    {% if inn['associated_with'] %}
+                                    <div class="item-subtitle">{{ inn['associated_with'] }}</div>
+                                    {% endif %}
+                                    <div class="item-meta-bar">
+                                        <span class="meta-pill"><i class="fa-regular fa-calendar"></i> {{ inn['date'] }}</span>
+                                        {% if inn['url'] %}
+                                        <a href="{{ inn['url'] }}" target="_blank" class="meta-pill meta-pill-primary" style="text-decoration: none;">
+                                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Innovation Link
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="item-actions-group">
+                                    <a href="/edit_innovation/{{ inn['innovation_id'] }}" class="btn-entry-edit">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </a>
+                                    <form method="POST" action="/delete_innovation/{{ inn['innovation_id'] }}" onsubmit="return confirm('Are you sure you want to delete this innovation entry?');" style="margin: 0;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn-entry-delete">
+                                            <i class="fa-solid fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% if inn['description'] %}
+                            <div class="item-description-text">{{ inn['description'] }}</div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-section-box">
+                        <i class="fa-solid fa-lightbulb empty-section-icon"></i>
+                        <h4>No Innovations or Extracurriculars Added</h4>
+                        <p>Include hackathons, patents, open-source leadership, research papers, or campus clubs.</p>
+                        <a href="/homepage" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Innovation</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- 8. COURSEWORK TAB -->
+                <div id="tab-coursework" class="tab-content">
+                    <div class="tab-header-row">
+                        <h3><i class="fa-solid fa-book-open" style="color: #2563eb;"></i> Relevant Academic Coursework</h3>
+                        <a href="/homepage" class="btn-add-section"><i class="fa-solid fa-plus"></i> Add Coursework</a>
+                    </div>
+
+                    {% if coursework and coursework|length > 0 %}
+                    <div class="items-list">
+                        {% for cw in coursework %}
+                        <div class="item-card">
+                            <div class="item-main-row">
+                                <div class="item-title-group">
+                                    <h4>{{ cw['course_name'] }}{% if cw['course_code'] %} <span style="font-weight: 500; font-size: 13px; color: #6b7280;">({{ cw['course_code'] }})</span>{% endif %}</h4>
+                                    <div class="item-subtitle">{{ cw['institution'] }}{% if cw['department'] %} • {{ cw['department'] }}{% endif %}</div>
+                                    <div class="item-meta-bar">
+                                        <span class="meta-pill"><i class="fa-regular fa-calendar"></i> Completed: {{ cw['completion_date'] }}</span>
+                                        {% if cw['grade'] %}
+                                        <span class="meta-pill meta-pill-success"><i class="fa-solid fa-award"></i> Grade/Marks: {{ cw['grade'] }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="item-actions-group">
+                                    <a href="/edit_coursework/{{ cw['coursework_id'] }}" class="btn-entry-edit">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </a>
+                                    <form method="POST" action="/delete_coursework/{{ cw['coursework_id'] }}" onsubmit="return confirm('Are you sure you want to delete this coursework entry?');" style="margin: 0;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn-entry-delete">
+                                            <i class="fa-solid fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% if cw['skills'] %}
+                            <div class="item-tags-container">
+                                {% for tag in cw['skills'].split(',') %}
+                                {% if tag.strip() %}
+                                <span class="skill-tag">{{ tag.strip() }}</span>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            {% if cw['description'] %}
+                            <div class="item-description-text">{{ cw['description'] }}</div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-section-box">
+                        <i class="fa-solid fa-book-open empty-section-icon"></i>
+                        <h4>No Academic Coursework Added</h4>
+                        <p>Highlight relevant courses such as Data Structures, Distributed Systems, Machine Learning, etc.</p>
+                        <a href="/homepage" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Coursework</a>
+                    </div>
+                    {% endif %}
+                </div>
+
             </div>
         </div>
     </div>
 
-
-    </div>
     <script>
         function showTab(evt, tabId) {
             const tabs = document.querySelectorAll('.tab-content');
-            const buttons = document.querySelectorAll('.tabs button');
+            const buttons = document.querySelectorAll('.profile-tabs button');
 
             tabs.forEach(tab => tab.classList.remove('active'));
             buttons.forEach(btn => btn.classList.remove('active'));
 
-            document.getElementById(tabId).classList.add('active');
-            evt.currentTarget.classList.add('active');
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.classList.add('active');
+            }
         }
     </script>
 </body>

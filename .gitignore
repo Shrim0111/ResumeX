@@ -1,0 +1,23 @@
+# Database files
+database.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Python bytecode & environments
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+ENV/
+
+# Secrets & Environment variables
+.env
+.env.*
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
